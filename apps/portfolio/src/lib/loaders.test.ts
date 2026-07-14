@@ -81,7 +81,9 @@ function actionArgs(url: string, values: Record<string, string>): ActionFunction
     request: new Request(url, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(values),
+      // Serialized form body: the jsdom realm's URLSearchParams instance is
+      // rejected by Node's Request constructor on Node 22.
+      body: new URLSearchParams(values).toString(),
     }),
     params: {},
     context: {},
