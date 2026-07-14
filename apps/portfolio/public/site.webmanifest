@@ -1,0 +1,11 @@
+{
+  "name": "Ahmed Sghaier — Portfolio",
+  "short_name": "Ahmed Sghaier",
+  "description": "Senior Full-Stack Engineer building enterprise applications, data systems and applied intelligence.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080b10",
+  "theme_color": "#080b10",
+  "lang": "en",
+  "dir": "ltr"
+}

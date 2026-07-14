@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /ticket
+
+Sitemap: https://a7med-sghaier.app/sitemap.xml
