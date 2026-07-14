@@ -18,6 +18,14 @@ export default defineConfig({
     host: process.env.VITE_DEV_HOST || "127.0.0.1",
     port: 4173,
     strictPort: true,
+    // Same-origin /api in dev (mirrors production): with an empty
+    // VITE_API_URL the browser calls this origin and the dev server forwards
+    // to the API, so auth/CSRF cookies stay first-party on any hostname.
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_PROXY_TARGET || "http://127.0.0.1:4100",
+      },
+    },
   },
   preview: {
     host: "127.0.0.1",
