@@ -737,6 +737,8 @@ export const en = {
   "gh.toast.rejected": "Change rejected",
   "gh.toast.approvedN": "{n} public changes approved",
   "gh.offline": "Sync offline",
+  "gh.enableTitle": "Repository synchronization",
+  "gh.enableSub": "Allow the API to contact GitHub and build repository previews.",
   "gh.demoNote":
     "GitHub sync is unavailable until a server-side token is configured. No repository changes are shown unless they are fetched from the live API.",
   "gh.stat.pending": "Pending",

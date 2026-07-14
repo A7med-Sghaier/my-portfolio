@@ -739,6 +739,8 @@ export const de = {
   "gh.toast.rejected": "Änderung abgelehnt",
   "gh.toast.approvedN": "{n} öffentliche Änderungen genehmigt",
   "gh.offline": "Synchronisierung offline",
+  "gh.enableTitle": "Repository-Synchronisierung",
+  "gh.enableSub": "Erlaubt der API, GitHub zu kontaktieren und Repository-Vorschauen zu erstellen.",
   "gh.demoNote":
     "Die GitHub-Synchronisierung ist erst nach Konfiguration eines serverseitigen Tokens verfügbar. Repository-Änderungen werden nur angezeigt, wenn sie von der Live-API geladen wurden.",
   "gh.stat.pending": "Ausstehend",
