@@ -1,0 +1,42 @@
+# dependencies
+**/node_modules/
+.pnpm-store/
+.pnp
+.pnp.*
+
+# build output
+/.next/
+/out/
+**/dist/
+**/storybook-static/
+playwright-report/
+test-results/
+
+# production
+/build
+
+# testing
+/coverage
+
+# env — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# local database volumes and API state
+.postgres-data/
+
+# Preserve any untracked legacy inbox export locally; the applications do not
+# read this file. Runtime messages now live only in PostgreSQL.
+/content/messages.json
+
+# misc
+.DS_Store
+*.pem
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vscode/*
+!.vscode/extensions.json
+.idea
