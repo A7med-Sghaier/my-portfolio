@@ -739,6 +739,16 @@ export const de = {
   "gh.toast.rejected": "Änderung abgelehnt",
   "gh.toast.approvedN": "{n} öffentliche Änderungen genehmigt",
   "gh.offline": "Synchronisierung offline",
+  "gh.newRepos": "Neue Repositories",
+  "gh.newReposSub": "Repositories deines Kontos, die noch keine Portfolio-Projekte sind.",
+  "gh.adopt": "Projekt erstellen",
+  "gh.adopting": "Wird erstellt…",
+  "gh.adopted": "Projektentwurf aus {name} erstellt — vor der Veröffentlichung prüfen.",
+  "gh.linkedExisting":
+    "Repository mit dem bestehenden Projekt {name} verknüpft — erkannte Änderungen prüfen.",
+  "gh.adoptFailed": "Aus dem Repository konnte kein Projekt erstellt werden.",
+  "gh.noNewRepos": "Jedes Repository ist bereits durch ein Projekt vertreten.",
+  "gh.privateRepo": "Privates Repository",
   "gh.demoNote":
     "Die GitHub-Synchronisierung ist erst nach Konfiguration eines serverseitigen Tokens verfügbar. Repository-Änderungen werden nur angezeigt, wenn sie von der Live-API geladen wurden.",
   "gh.stat.pending": "Ausstehend",

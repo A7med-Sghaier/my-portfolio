@@ -737,6 +737,16 @@ export const en = {
   "gh.toast.rejected": "Change rejected",
   "gh.toast.approvedN": "{n} public changes approved",
   "gh.offline": "Sync offline",
+  "gh.newRepos": "New repositories",
+  "gh.newReposSub": "Repositories on your account that are not portfolio projects yet.",
+  "gh.adopt": "Create project",
+  "gh.adopting": "Creating…",
+  "gh.adopted": "Draft project created from {name} — review it before publishing.",
+  "gh.linkedExisting":
+    "Repository linked to the existing project {name} — review the detected changes.",
+  "gh.adoptFailed": "The repository could not be turned into a project.",
+  "gh.noNewRepos": "Every repository is already represented by a project.",
+  "gh.privateRepo": "Private repository",
   "gh.demoNote":
     "GitHub sync is unavailable until a server-side token is configured. No repository changes are shown unless they are fetched from the live API.",
   "gh.stat.pending": "Pending",
