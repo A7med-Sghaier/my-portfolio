@@ -47,6 +47,16 @@ export const HttpUrlSchema = z
   }, "URL must use HTTPS; HTTP is allowed only for local development");
 const UrlSchema = HttpUrlSchema;
 const OptionalUrlSchema = UrlSchema.nullable().optional();
+export const AvatarUrlSchema = z
+  .string()
+  .max(400_000)
+  .refine(
+    (value) =>
+      /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(value) ||
+      HttpUrlSchema.safeParse(value).success,
+    "Avatar must be an HTTPS URL or an inline image",
+  );
+const OptionalAvatarUrlSchema = AvatarUrlSchema.nullable().optional();
 const TimestampSchema = z.string().datetime({ offset: true });
 const SortOrderSchema = z.number().int().min(0).default(0);
 const OptionalTextSchema = z.string().max(20_000).nullable().optional();
@@ -75,7 +85,7 @@ export const ProfileInputSchema = z.object({
   linkedinUrl: OptionalUrlSchema,
   domainUrl: OptionalUrlSchema,
   email: z.string().email().max(320),
-  avatarUrl: OptionalUrlSchema,
+  avatarUrl: OptionalAvatarUrlSchema,
   languages: z.array(LanguageProficiencySchema).max(20),
   status: ContentStatusSchema.default("published"),
 });
@@ -409,10 +419,24 @@ export const GitHubProjectPreviewSchema = z.object({
 });
 export type GitHubProjectPreview = z.infer<typeof GitHubProjectPreviewSchema>;
 
+export const GitHubDetectedChangeSchema = z.object({
+  id: z.string(),
+  projectId: z.string().uuid(),
+  slug: z.string(),
+  repo: z.string(),
+  field: z.enum(["description", "topics", "pushedAt"]),
+  from: z.string(),
+  to: z.string(),
+  visibility: VisibilitySchema,
+  patch: z.record(JsonValueSchema),
+});
+export type GitHubDetectedChange = z.infer<typeof GitHubDetectedChangeSchema>;
+
 export const GitHubSyncPreviewSchema = z.object({
   enabled: z.boolean(),
   generatedAt: TimestampSchema,
   projects: z.array(GitHubProjectPreviewSchema),
+  changes: z.array(GitHubDetectedChangeSchema).default([]),
 });
 export type GitHubSyncPreview = z.infer<typeof GitHubSyncPreviewSchema>;
 
