@@ -735,8 +735,6 @@ export const fr = {
   "gh.toast.rejected": "Changement rejeté",
   "gh.toast.approvedN": "{n} changements publics approuvés",
   "gh.offline": "Synchro hors ligne",
-  "gh.enableTitle": "Synchronisation des dépôts",
-  "gh.enableSub": "Autorise l'API à contacter GitHub et à générer des aperçus de dépôts.",
   "gh.demoNote":
     "La synchronisation GitHub reste indisponible tant qu’un jeton serveur n’est pas configuré. Aucun changement n’est affiché sans données provenant de l’API active.",
   "gh.stat.pending": "En attente",
