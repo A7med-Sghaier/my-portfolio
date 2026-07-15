@@ -740,7 +740,8 @@ export const fr = {
   "gh.adopt": "Créer un projet",
   "gh.adopting": "Création…",
   "gh.adopted": "Brouillon de projet créé depuis {name} — à relire avant publication.",
-  "gh.linkedExisting": "Dépôt lié au projet existant {name} — vérifiez les changements détectés.",
+  "gh.linkedExisting":
+    "Projet {name} actualisé depuis son dépôt — vérifiez les champs avant publication.",
   "gh.adoptFailed": "Le dépôt n'a pas pu être transformé en projet.",
   "gh.noNewRepos": "Chaque dépôt est déjà représenté par un projet.",
   "gh.privateRepo": "Dépôt privé",

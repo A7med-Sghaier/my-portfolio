@@ -72,7 +72,7 @@ export interface PortfolioApiClient {
     signal?: AbortSignal,
   ): Promise<{
     project: AdminResourceMap["projects"];
-    mode: "generated" | "extracted" | "linked";
+    mode: "generated" | "extracted" | "refreshed";
   }>;
   dismissGitHubChange(
     id: string,
