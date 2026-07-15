@@ -74,6 +74,11 @@ export interface PortfolioApiClient {
     project: AdminResourceMap["projects"];
     mode: "generated" | "extracted" | "linked";
   }>;
+  dismissGitHubChange(
+    id: string,
+    value: string,
+    signal?: AbortSignal,
+  ): Promise<{ dismissed: true }>;
   exportContent(signal?: AbortSignal): Promise<ContentSnapshot>;
   importContent(
     snapshot: ContentSnapshot,
@@ -254,6 +259,13 @@ export function createApiClient(options: ApiClientOptions): PortfolioApiClient {
         method: "POST",
         csrf: "admin",
         body: { url },
+        ...(signal ? { signal } : {}),
+      }),
+    dismissGitHubChange: (id, value, signal) =>
+      request("/api/admin/github/dismiss", {
+        method: "POST",
+        csrf: "admin",
+        body: { id, value },
         ...(signal ? { signal } : {}),
       }),
     exportContent: (signal) => request("/api/admin/content/export", signal ? { signal } : {}),
