@@ -67,6 +67,13 @@ export interface PortfolioApiClient {
   getDashboard(signal?: AbortSignal): Promise<Dashboard>;
   getGitHubStatus(signal?: AbortSignal): Promise<GitHubSyncStatus>;
   previewGitHubSync(signal?: AbortSignal): Promise<GitHubSyncPreview>;
+  adoptRepository(
+    url: string,
+    signal?: AbortSignal,
+  ): Promise<{
+    project: AdminResourceMap["projects"];
+    mode: "generated" | "extracted" | "linked";
+  }>;
   exportContent(signal?: AbortSignal): Promise<ContentSnapshot>;
   importContent(
     snapshot: ContentSnapshot,
@@ -240,6 +247,13 @@ export function createApiClient(options: ApiClientOptions): PortfolioApiClient {
       request("/api/admin/github/preview", {
         method: "POST",
         csrf: "admin",
+        ...(signal ? { signal } : {}),
+      }),
+    adoptRepository: (url, signal) =>
+      request("/api/admin/github/adopt", {
+        method: "POST",
+        csrf: "admin",
+        body: { url },
         ...(signal ? { signal } : {}),
       }),
     exportContent: (signal) => request("/api/admin/content/export", signal ? { signal } : {}),

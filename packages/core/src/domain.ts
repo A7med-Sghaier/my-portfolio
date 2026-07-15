@@ -432,11 +432,25 @@ export const GitHubDetectedChangeSchema = z.object({
 });
 export type GitHubDetectedChange = z.infer<typeof GitHubDetectedChangeSchema>;
 
+export const GitHubRepoCandidateSchema = z.object({
+  name: z.string(),
+  fullName: z.string(),
+  url: HttpUrlSchema,
+  description: z.string().nullable(),
+  topics: z.array(z.string()).default([]),
+  language: z.string().nullable(),
+  private: z.boolean(),
+  createdAt: TimestampSchema.nullable(),
+  pushedAt: TimestampSchema.nullable(),
+});
+export type GitHubRepoCandidate = z.infer<typeof GitHubRepoCandidateSchema>;
+
 export const GitHubSyncPreviewSchema = z.object({
   enabled: z.boolean(),
   generatedAt: TimestampSchema,
   projects: z.array(GitHubProjectPreviewSchema),
   changes: z.array(GitHubDetectedChangeSchema).default([]),
+  newRepos: z.array(GitHubRepoCandidateSchema).default([]),
 });
 export type GitHubSyncPreview = z.infer<typeof GitHubSyncPreviewSchema>;
 
