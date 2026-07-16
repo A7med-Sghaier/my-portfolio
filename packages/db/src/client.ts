@@ -3,6 +3,8 @@ import type {
   AdminResource,
   AdminResourceInputMap,
   AdminResourceMap,
+  AssistantAnswer,
+  AssistantAskRequest,
   ContactRequest,
   ContentSnapshot,
   Dashboard,
@@ -57,6 +59,7 @@ export interface PortfolioApiClient {
     signal?: AbortSignal,
   ): Promise<{ ref: string; status: TicketStatus; createdAt: string }>;
   lookupTicket(input: TicketLookupRequest, signal?: AbortSignal): Promise<Message>;
+  askAssistant(input: AssistantAskRequest, signal?: AbortSignal): Promise<AssistantAnswer>;
   replyToTicket(input: TicketReplyRequest, signal?: AbortSignal): Promise<Message>;
   getPublicCsrfToken(signal?: AbortSignal): Promise<{ csrfToken: string }>;
   getAdminCsrfToken(signal?: AbortSignal): Promise<{ csrfToken: string }>;
@@ -86,6 +89,8 @@ export interface PortfolioApiClient {
     signal?: AbortSignal,
   ): Promise<ContentSnapshot>;
   resetContentToSeed(signal?: AbortSignal): Promise<ContentSnapshot>;
+  getTechnologyEcosystem(signal?: AbortSignal): Promise<string[]>;
+  replaceTechnologyEcosystem(names: string[], signal?: AbortSignal): Promise<string[]>;
   listResource<R extends AdminResource>(
     resource: R,
     options?: ListOptions,
@@ -213,6 +218,12 @@ export function createApiClient(options: ApiClientOptions): PortfolioApiClient {
       }),
     lookupTicket: (input, signal) =>
       request("/api/ticket/lookup", { method: "POST", body: input, ...(signal ? { signal } : {}) }),
+    askAssistant: (input, signal) =>
+      request("/api/assistant/ask", {
+        method: "POST",
+        body: input,
+        ...(signal ? { signal } : {}),
+      }),
     replyToTicket: (input, signal) =>
       request("/api/ticket/reply", {
         method: "POST",
@@ -279,6 +290,15 @@ export function createApiClient(options: ApiClientOptions): PortfolioApiClient {
     resetContentToSeed: (signal) =>
       request("/api/admin/content/reset", {
         method: "POST",
+        csrf: "admin",
+        ...(signal ? { signal } : {}),
+      }),
+    getTechnologyEcosystem: (signal) =>
+      request("/api/admin/technology-ecosystem", signal ? { signal } : {}),
+    replaceTechnologyEcosystem: (names, signal) =>
+      request("/api/admin/technology-ecosystem", {
+        method: "PUT",
+        body: { names },
         csrf: "admin",
         ...(signal ? { signal } : {}),
       }),
