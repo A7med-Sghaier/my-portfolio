@@ -312,6 +312,13 @@ export const ContactRequestSchema = z.object({
 });
 export type ContactRequest = z.infer<typeof ContactRequestSchema>;
 
+export const AssistantAskRequestSchema = z.object({
+  question: z.string().trim().min(1).max(500),
+  locale: LocaleSchema.default("en"),
+});
+export type AssistantAskRequest = z.input<typeof AssistantAskRequestSchema>;
+export type AssistantAnswer = { text: string };
+
 export const TicketLookupRequestSchema = z.object({
   ref: z
     .string()
@@ -419,16 +426,26 @@ export const GitHubProjectPreviewSchema = z.object({
 });
 export type GitHubProjectPreview = z.infer<typeof GitHubProjectPreviewSchema>;
 
+export const GitHubChangePartSchema = z.object({
+  field: z.enum(["description", "topics", "pushedAt"]),
+  from: z.string(),
+  to: z.string(),
+});
+export type GitHubChangePart = z.infer<typeof GitHubChangePartSchema>;
+
+// One consolidated proposal per project: `parts` lists the individual field
+// diffs and `patch` carries the complete merged update they amount to.
 export const GitHubDetectedChangeSchema = z.object({
   id: z.string(),
   projectId: z.string().uuid(),
   slug: z.string(),
   repo: z.string(),
-  field: z.enum(["description", "topics", "pushedAt"]),
+  field: z.enum(["description", "topics", "pushedAt", "update"]),
   from: z.string(),
   to: z.string(),
   visibility: VisibilitySchema,
   patch: z.record(JsonValueSchema),
+  parts: z.array(GitHubChangePartSchema).default([]),
 });
 export type GitHubDetectedChange = z.infer<typeof GitHubDetectedChangeSchema>;
 
@@ -459,6 +476,8 @@ export const ReorderRequestSchema = z.object({
 });
 export type ReorderRequest = z.infer<typeof ReorderRequestSchema>;
 
+export const TechnologyEcosystemSchema = z.array(z.string().trim().min(1).max(160)).max(500);
+
 export const ProfileOverridesSchema = z.object({
   name: z.string().trim().min(1).max(160).optional(),
   title: z.string().trim().min(1).max(240).optional(),
@@ -482,7 +501,7 @@ export const ContentSnapshotSchema = z.object({
   translations: z.array(TranslationInputSchema),
   profiles: z.array(ProfileInputSchema).optional(),
   services: z.array(ServiceInputSchema).optional(),
-  technologyEcosystem: z.array(z.string().trim().min(1).max(160)).optional(),
+  technologyEcosystem: TechnologyEcosystemSchema.optional(),
   settings: z.array(SettingInputSchema).optional(),
 });
 export type ContentSnapshot = z.infer<typeof ContentSnapshotSchema>;
