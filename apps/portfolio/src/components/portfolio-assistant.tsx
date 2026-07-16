@@ -10,6 +10,7 @@ import { useI18n, type TKey } from "@portfolio/i18n";
 import { ArrowUpRight, BookOpenCheck, MessageCircleQuestion, Send, X } from "lucide-react";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router";
+import { getApiClient } from "@/lib/api";
 import type { PortfolioContent } from "@/lib/content";
 import { answerPortfolioQuestion, type PortfolioAnswer } from "@/lib/portfolio-assistant";
 import { localizedPath } from "@/lib/locale";
@@ -27,7 +28,9 @@ export function PortfolioAssistant({ content }: { content: PortfolioContent }) {
   const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [pending, setPending] = useState(false);
   const nextId = useRef(1);
+  const conversationRef = useRef(0);
   const bodyRef = useRef<HTMLDivElement>(null);
   const profileName = content.profile?.name ?? "Ahmed";
   const firstName = profileName.split(/\s+/)[0] ?? profileName;
@@ -37,8 +40,10 @@ export function PortfolioAssistant({ content }: { content: PortfolioContent }) {
   ]);
 
   useEffect(() => {
+    conversationRef.current += 1;
     nextId.current = 1;
     setInput("");
+    setPending(false);
     setMessages([{ id: 0, role: "portfolio", text: greeting, sources: [] }]);
   }, [greeting]);
 
@@ -48,16 +53,31 @@ export function PortfolioAssistant({ content }: { content: PortfolioContent }) {
 
   const send = (rawQuestion: string) => {
     const question = rawQuestion.trim();
-    if (!question) return;
-    const answer = answerPortfolioQuestion(content, question, t("asst.fallback"));
+    if (!question || pending) return;
+    const conversation = conversationRef.current;
     const visitorId = nextId.current++;
-    const answerId = nextId.current++;
     setMessages((current) => [
       ...current,
       { id: visitorId, role: "visitor", text: question, sources: [] },
-      { id: answerId, role: "portfolio", text: answer.text, sources: answer.sources },
     ]);
     setInput("");
+    setPending(true);
+    // Grounded keyword answer: the response when the AI assistant is
+    // unconfigured or unreachable, and the source links either way.
+    const local = answerPortfolioQuestion(content, question, t("asst.fallback"));
+    void getApiClient()
+      .askAssistant({ question, locale: lang }, AbortSignal.timeout(65_000))
+      .then((answer): PortfolioAnswer => ({ text: answer.text, sources: local.sources }))
+      .catch(() => local)
+      .then((answer) => {
+        if (conversationRef.current !== conversation) return;
+        const answerId = nextId.current++;
+        setMessages((current) => [
+          ...current,
+          { id: answerId, role: "portfolio", text: answer.text, sources: answer.sources },
+        ]);
+        setPending(false);
+      });
   };
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -153,6 +173,14 @@ export function PortfolioAssistant({ content }: { content: PortfolioContent }) {
             </article>
           ))}
 
+          {pending ? (
+            <article className="flex justify-start">
+              <div className="max-w-[88%] animate-pulse rounded-2xl rounded-es-sm bg-secondary/65 px-3.5 py-2.5 text-sm leading-6 text-muted-foreground">
+                {t("asst.thinking")}
+              </div>
+            </article>
+          ) : null}
+
           {messages.length === 1 ? (
             <div className="flex flex-wrap gap-2 pt-1">
               {suggestionKeys.map((key) => (
@@ -192,7 +220,7 @@ export function PortfolioAssistant({ content }: { content: PortfolioContent }) {
           </label>
           <button
             type="submit"
-            disabled={!input.trim()}
+            disabled={!input.trim() || pending}
             className="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-signal text-signal-foreground transition-opacity disabled:opacity-40"
             aria-label={t("asst.send")}
           >

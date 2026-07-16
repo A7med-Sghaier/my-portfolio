@@ -19,6 +19,7 @@ export type PortfolioPublicClient = Pick<
   | "submitContact"
   | "lookupTicket"
   | "replyToTicket"
+  | "askAssistant"
 >;
 
 let testClient: PortfolioPublicClient | null = null;

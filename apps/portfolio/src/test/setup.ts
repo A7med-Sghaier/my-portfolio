@@ -18,3 +18,6 @@ Object.defineProperty(window, "scrollTo", {
   writable: true,
   value: () => undefined,
 });
+
+// jsdom implements scrollTo on window only, not on elements.
+Element.prototype.scrollTo = () => undefined;
