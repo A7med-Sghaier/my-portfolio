@@ -17,6 +17,7 @@ export interface ProfileLanguage {
 export interface PortfolioProfile {
   name: string;
   monogram: string;
+  avatarUrl?: string;
   title: string;
   positioning: string;
   statement: string;
@@ -219,6 +220,14 @@ function safeAssetUrl(value: unknown): string | undefined {
   return safeHttpUrl(candidate);
 }
 
+// The admin stores avatars either as an inline data URL or a hosted image.
+function safeAvatarUrl(value: unknown): string | undefined {
+  const candidate = optionalString(value);
+  if (!candidate) return undefined;
+  if (/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(candidate)) return candidate;
+  return safeAssetUrl(candidate);
+}
+
 function safeEmail(value: unknown): string | undefined {
   const candidate = optionalString(value)?.replace(/^mailto:/i, "");
   return candidate && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(candidate) ? candidate : undefined;
@@ -303,6 +312,7 @@ function normalizeProfile(value: unknown): PortfolioProfile | null {
         .join("")
         .slice(0, 2)
         .toUpperCase(),
+    avatarUrl: safeAvatarUrl(profile.avatarUrl ?? profile.avatar ?? profile.photoUrl),
     title: stringValue(profile.title),
     positioning: stringValue(profile.positioning) || stringValue(profile.tagline),
     statement: stringValue(profile.statement) || stringValue(profile.summaryShort),
@@ -572,6 +582,26 @@ export function normalizeTicket(raw: unknown): PublicTicket | null {
       };
     }),
   };
+}
+
+/** Compact display label for a profile link: host plus path, no protocol. */
+export function linkLabel(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const path = parsed.pathname.replace(/\/$/, "");
+    return `${parsed.host}${path}`;
+  } catch {
+    return url;
+  }
+}
+
+/** Earliest four-digit start year across experiences, or null when unknown. */
+export function careerStartYear(experiences: PortfolioExperience[]): number | null {
+  const years = experiences
+    .map((experience) => /(?:19|20)\d{2}/.exec(experience.start)?.[0])
+    .filter((value): value is string => Boolean(value))
+    .map(Number);
+  return years.length > 0 ? Math.min(...years) : null;
 }
 
 export function careerYears(

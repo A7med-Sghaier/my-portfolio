@@ -16,7 +16,7 @@ const intelligence: { icon: typeof Cpu; key: TKey }[] = [
   { icon: Sparkles, key: "ai.ai.assisted" },
 ];
 
-export function AiEngineering() {
+export function AiEngineering({ monogram }: { monogram: string }) {
   const { t } = useI18n();
 
   return (
@@ -66,7 +66,7 @@ export function AiEngineering() {
               className="absolute left-1/2 top-1/2 grid h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-border bg-background font-display text-signal shadow-lg"
               style={{ fontWeight: 600 }}
             >
-              AS
+              {monogram}
             </span>
           </div>
 

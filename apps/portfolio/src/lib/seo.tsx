@@ -55,6 +55,8 @@ export interface SeoProps {
   type?: "website" | "article" | "profile";
   structuredData?: unknown;
   noIndex?: boolean;
+  /** Owner name from the admin-managed profile; suffixes titles and names the site. */
+  siteName?: string;
 }
 
 export function Seo({
@@ -67,9 +69,10 @@ export function Seo({
   type = "website",
   structuredData,
   noIndex = false,
+  siteName = "Ahmed Sghaier",
 }: SeoProps) {
   useEffect(() => {
-    const fullTitle = title.includes("Ahmed Sghaier") ? title : `${title} · Ahmed Sghaier`;
+    const fullTitle = title.includes(siteName) ? title : `${title} · ${siteName}`;
     const normalizedPath = path === "/" ? "" : path;
     const canonical = `${siteOrigin()}${normalizedPath}`;
     const shareImage = absoluteUrl(image);
@@ -90,7 +93,7 @@ export function Seo({
       'meta[property="og:site_name"]',
       "property",
       "og:site_name",
-      "Ahmed Sghaier — Portfolio",
+      `${siteName} — Portfolio`,
     );
     upsertMeta('meta[property="og:locale"]', "property", "og:locale", locale);
     upsertMeta('meta[property="og:image"]', "property", "og:image", shareImage);
@@ -133,13 +136,19 @@ export function Seo({
       }).replace(/</g, "\\u003c");
       document.head.append(script);
     }
-  }, [description, image, imageAlt, locale, noIndex, path, structuredData, title, type]);
+  }, [description, image, imageAlt, locale, noIndex, path, siteName, structuredData, title, type]);
 
   return null;
 }
 
 export function personStructuredData(profile: PortfolioProfile | null): unknown[] {
   if (!profile) return [];
+  // Inline data-URL avatars are unusable in structured data; fall back to the
+  // static portrait asset in that case.
+  const avatar =
+    profile.avatarUrl && !profile.avatarUrl.startsWith("data:")
+      ? absoluteUrl(profile.avatarUrl)
+      : absoluteUrl("/images/profile/portrait.jpg");
   return [
     {
       "@type": "Person",
@@ -147,13 +156,14 @@ export function personStructuredData(profile: PortfolioProfile | null): unknown[
       jobTitle: profile.title,
       description: profile.statement,
       url: siteOrigin(),
-      image: absoluteUrl("/images/profile/portrait.jpg"),
+      image: avatar,
       email: profile.links.email ? `mailto:${profile.links.email}` : undefined,
-      address: {
-        "@type": "PostalAddress",
-        addressRegion: "Bavaria",
-        addressCountry: "DE",
-      },
+      address: profile.location
+        ? {
+            "@type": "PostalAddress",
+            addressLocality: profile.location,
+          }
+        : undefined,
       knowsAbout: profile.disciplines,
       knowsLanguage: profile.languages.map((language) => language.name),
       sameAs: [profile.links.github, profile.links.linkedin].filter(Boolean),

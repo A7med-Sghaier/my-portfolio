@@ -19,6 +19,7 @@ export function ExperiencePage() {
       <Seo
         title={t("exp.eyebrow")}
         description={t("exp.intro")}
+        siteName={profile?.name}
         path="/experience"
         locale={locale}
         structuredData={personStructuredData(profile)}

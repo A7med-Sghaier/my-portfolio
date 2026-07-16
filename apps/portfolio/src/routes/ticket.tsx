@@ -102,7 +102,8 @@ function ConversationBubble({
 }
 
 export function TicketPage() {
-  const { locale } = usePortfolioData();
+  const { locale, content } = usePortfolioData();
+  const ownerName = content.profile?.name ?? "";
   const { t } = useI18n();
   const actionData = useActionData<TicketActionData>();
   const navigation = useNavigation();
@@ -137,6 +138,7 @@ export function TicketPage() {
       <Seo
         title={t("ticket.eyebrow")}
         description={t("ticket.intro")}
+        siteName={content.profile?.name}
         path="/ticket"
         locale={locale}
         noIndex
@@ -256,7 +258,7 @@ export function TicketPage() {
                 <ConversationBubble
                   key={entry.id}
                   mine={entry.author === "visitor"}
-                  name={entry.author === "ahmed" ? "Ahmed Sghaier" : ticket.name}
+                  name={entry.author === "ahmed" ? ownerName : ticket.name}
                   body={entry.body}
                   createdAt={entry.createdAt}
                 />

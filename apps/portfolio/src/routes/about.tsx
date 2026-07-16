@@ -258,6 +258,7 @@ export function AboutPage() {
       <Seo
         title={t("about.eyebrow")}
         description={profile.statement}
+        siteName={profile.name}
         path="/about"
         locale={locale}
         type="profile"
@@ -320,7 +321,7 @@ export function AboutPage() {
             >
               <motion.div className="h-full w-full" style={reduce ? undefined : { y: portraitY }}>
                 <img
-                  src="/images/profile/portrait.jpg"
+                  src={profile.avatarUrl ?? "/images/profile/portrait.jpg"}
                   alt={`Portrait of ${profile.name}`}
                   className="h-[112%] w-full object-cover"
                 />

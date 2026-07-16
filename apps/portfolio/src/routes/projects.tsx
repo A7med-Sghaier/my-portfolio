@@ -63,6 +63,7 @@ export function ProjectsPage() {
       <Seo
         title={t("proj.eyebrow")}
         description={t("proj.intro")}
+        siteName={content.profile?.name}
         path="/projects"
         locale={locale}
         structuredData={breadcrumbStructuredData([

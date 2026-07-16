@@ -218,14 +218,14 @@ function ThemeToggle({ dark, onToggle }: { dark: boolean; onToggle: () => void }
   );
 }
 
-function ProfileAvatar({ name, size = 38 }: { name: string; size?: number }) {
+function ProfileAvatar({ name, src, size = 38 }: { name: string; src?: string; size?: number }) {
   return (
     <span
       className="shrink-0 overflow-hidden rounded-full border border-border ring-1 ring-signal/30"
       style={{ width: size, height: size }}
     >
       <img
-        src="/images/profile/portrait.jpg"
+        src={src ?? "/images/profile/portrait.jpg"}
         alt={`${name} portrait`}
         width={size * 3}
         height={size * 3}
@@ -276,7 +276,7 @@ function SiteHeader({
           className="group flex items-center gap-2.5"
           aria-label={`${profileName} — ${t("nav.home")}`}
         >
-          <ProfileAvatar name={profileName} />
+          <ProfileAvatar name={profileName} src={profile?.avatarUrl} />
           <span className="flex flex-col leading-none">
             <span
               className="font-display tracking-tight"
@@ -497,7 +497,7 @@ function SiteFooter({
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <ProfileAvatar size={30} name={profileName} />
+              <ProfileAvatar size={30} name={profileName} src={profile?.avatarUrl} />
               <span className="font-display" style={{ fontSize: "1.05rem", fontWeight: 600 }}>
                 {profileName}
               </span>

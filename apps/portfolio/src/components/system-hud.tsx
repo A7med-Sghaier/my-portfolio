@@ -128,8 +128,12 @@ export function SystemHud({
               >
                 {t("hud.operational")}
               </span>
-              <span className="text-border">·</span>
-              <span>Bavaria</span>
+              {content.profile?.location ? (
+                <>
+                  <span className="text-border">·</span>
+                  <span>{content.profile.location}</span>
+                </>
+              ) : null}
             </div>
 
             <div className="mt-2.5 flex items-center gap-1.5">

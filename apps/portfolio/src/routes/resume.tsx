@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/feedback";
 import { PageBackdrop } from "@/components/reference-backgrounds";
 import { ActionButton, Eyebrow } from "@/components/reference-home/ui";
 import { getApiClient } from "@/lib/api";
-import { normalizeContent, type PortfolioContent } from "@/lib/content";
+import { linkLabel, normalizeContent, type PortfolioContent } from "@/lib/content";
 import {
   downloadResumeMarkdown,
   downloadResumePdf,
@@ -91,7 +91,7 @@ export function ResumePage() {
   const fallbackDownload = (extension: "pdf" | "md") => {
     const anchor = document.createElement("a");
     anchor.href = `/files/ahmed-sghaier-resume.${extension}`;
-    anchor.download = `Ahmed-Sghaier-CV.${extension}`;
+    anchor.download = resumeFileName(extension, undefined, profile.name);
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
@@ -101,11 +101,13 @@ export function ResumePage() {
       const payload = await exportPayload();
       downloadResumePdf(payload.exportContent, payload.labels, payload.exportFocus);
       toast.success(t("resume.downloaded"), {
-        description: resumeFileName("pdf", payload.exportFocus),
+        description: resumeFileName("pdf", payload.exportFocus, profile.name),
       });
     } catch {
       fallbackDownload("pdf");
-      toast.success(t("resume.downloaded"), { description: "Ahmed-Sghaier-CV.pdf" });
+      toast.success(t("resume.downloaded"), {
+        description: resumeFileName("pdf", undefined, profile.name),
+      });
     }
   };
   const handleMarkdown = async () => {
@@ -113,11 +115,13 @@ export function ResumePage() {
       const payload = await exportPayload();
       downloadResumeMarkdown(payload.exportContent, payload.labels, payload.exportFocus);
       toast.success(t("resume.downloaded"), {
-        description: resumeFileName("md", payload.exportFocus),
+        description: resumeFileName("md", payload.exportFocus, profile.name),
       });
     } catch {
       fallbackDownload("md");
-      toast.success(t("resume.downloaded"), { description: "Ahmed-Sghaier-CV.md" });
+      toast.success(t("resume.downloaded"), {
+        description: resumeFileName("md", undefined, profile.name),
+      });
     }
   };
   const handlePrint = async () => {
@@ -134,6 +138,7 @@ export function ResumePage() {
       <Seo
         title={t("label.resume")}
         description={`${t("label.cv")} — ${profile.name}, ${profile.title}.`}
+        siteName={profile.name}
         path="/resume"
         locale={locale}
         type="profile"
@@ -238,12 +243,13 @@ export function ResumePage() {
               ) : null}
               {profile.links.github ? (
                 <a href={profile.links.github} className="inline-flex items-center gap-1.5">
-                  <Github aria-hidden className="h-3.5 w-3.5" /> A7med-Sghaier
+                  <Github aria-hidden className="h-3.5 w-3.5" /> {linkLabel(profile.links.github)}
                 </a>
               ) : null}
               {profile.links.linkedin ? (
                 <a href={profile.links.linkedin} className="inline-flex items-center gap-1.5">
-                  <Linkedin aria-hidden className="h-3.5 w-3.5" /> ahmed-sghaier
+                  <Linkedin aria-hidden className="h-3.5 w-3.5" />{" "}
+                  {linkLabel(profile.links.linkedin)}
                 </a>
               ) : null}
               <span>{profile.location}</span>

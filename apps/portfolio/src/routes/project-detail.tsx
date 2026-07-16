@@ -69,6 +69,7 @@ export function ProjectDetailPage() {
       <Seo
         title={project.title}
         description={project.tagline}
+        siteName={profile?.name}
         path={`/projects/${project.slug}`}
         locale={locale}
         type="article"

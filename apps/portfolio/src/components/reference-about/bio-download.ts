@@ -21,10 +21,10 @@ function saveBlob(blob: Blob, filename: string) {
   window.setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
-function downloadCanonicalResume() {
+function downloadCanonicalResume(name: string) {
   const anchor = document.createElement("a");
   anchor.href = "/files/ahmed-sghaier-resume.pdf";
-  anchor.download = "Ahmed-Sghaier-resume.pdf";
+  anchor.download = `${fileStem(name)}-resume.pdf`;
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
@@ -180,7 +180,7 @@ export async function downloadBioPdf(content: PortfolioContent, locale = "en") {
     try {
       pdfContent = normalizeContent(await getApiClient().getPublicContent("en"));
     } catch {
-      downloadCanonicalResume();
+      downloadCanonicalResume(content.profile?.name ?? "resume");
       return;
     }
   }

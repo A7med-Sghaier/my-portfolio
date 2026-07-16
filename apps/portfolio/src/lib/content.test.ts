@@ -26,6 +26,7 @@ describe("portfolio response normalization", () => {
         linkedinUrl: "https://linkedin.com/in/example",
         domainUrl: "https://example.com",
         email: "ahmed@example.com",
+        avatarUrl: "data:image/webp;base64,UklGRg==",
         languages: [{ name: "English", level: "B2", value: 75 }],
       },
       projects: [
@@ -58,10 +59,22 @@ describe("portfolio response normalization", () => {
     });
 
     expect(result.profile?.links.github).toBe("https://github.com/example");
+    // The admin-managed avatar (inline data URL or hosted image) flows through.
+    expect(result.profile?.avatarUrl).toBe("data:image/webp;base64,UklGRg==");
     expect(result.projects).toHaveLength(1);
     expect(result.projects[0]?.media[0]?.alt).toBe("Typed platform UI");
     expect(result.performanceMetric?.to).toBe("700ms");
     expect(result.technologyEcosystem).toEqual(["React", "PostgreSQL"]);
+  });
+
+  it("drops avatar URLs that are neither safe links nor inline images", () => {
+    const result = normalizeContent({
+      profile: {
+        name: "Ahmed Sghaier",
+        avatarUrl: "ftp://example.com/portrait.jpg",
+      },
+    });
+    expect(result.profile?.avatarUrl).toBeUndefined();
   });
 
   it("normalizes project and ticket envelopes", () => {

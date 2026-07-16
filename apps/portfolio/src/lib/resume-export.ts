@@ -31,9 +31,14 @@ function filenamePart(value: string): string {
     .replace(/\s+/g, "-");
 }
 
-export function resumeFileName(extension: "pdf" | "md", focus?: ResumeFocus): string {
+export function resumeFileName(
+  extension: "pdf" | "md",
+  focus?: ResumeFocus,
+  name?: string,
+): string {
+  const base = name?.trim() ? `${filenamePart(name)}-CV` : "CV";
   const suffix = focus ? filenamePart(focus.title) : "";
-  return `Ahmed-Sghaier-CV${suffix ? `-${suffix}` : ""}.${extension}`;
+  return `${base}${suffix ? `-${suffix}` : ""}.${extension}`;
 }
 
 function buildResumeDocument(
@@ -238,7 +243,9 @@ export function downloadResumePdf(
   labels: ResumeExportLabels,
   focus?: ResumeFocus,
 ) {
-  buildResumeDocument(content, labels, focus)?.save(resumeFileName("pdf", focus));
+  buildResumeDocument(content, labels, focus)?.save(
+    resumeFileName("pdf", focus, content.profile?.name),
+  );
 }
 
 export function printResumePdf(
@@ -321,7 +328,7 @@ export function downloadResumeMarkdown(
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = resumeFileName("md", focus);
+  anchor.download = resumeFileName("md", focus, content.profile?.name);
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();

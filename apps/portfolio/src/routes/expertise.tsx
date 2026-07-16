@@ -6,16 +6,17 @@ import { Link } from "react-router";
 import { EmptyState } from "@/components/feedback";
 import { PageBackdrop } from "@/components/reference-backgrounds";
 import { Eyebrow, TechTag } from "@/components/reference-home/ui";
-import type { PortfolioExperience } from "@/lib/content";
+import { careerStartYear, type PortfolioExperience } from "@/lib/content";
 import { localizedPath } from "@/lib/locale";
 import { Seo } from "@/lib/seo";
 import { usePortfolioData } from "@/lib/use-content";
 
-const CAREER_START_YEAR = 2015;
-
-function experienceYearRange(experience: PortfolioExperience): [number, number] {
+function experienceYearRange(
+  experience: PortfolioExperience,
+  careerStart: number,
+): [number, number] {
   const now = new Date().getFullYear();
-  const start = Number(experience.start.match(/\d{4}/)?.[0] ?? CAREER_START_YEAR);
+  const start = Number(experience.start.match(/\d{4}/)?.[0] ?? careerStart);
   const explicitEnd = experience.end?.match(/\d{4}/)?.[0];
   const periodEnd = experience.period.split(/[—–-]/).pop()?.match(/\d{4}/)?.[0];
   const end = Number(explicitEnd ?? periodEnd ?? now);
@@ -25,9 +26,11 @@ function experienceYearRange(experience: PortfolioExperience): [number, number] 
 function ExpertiseEvidence({
   relatedExperience,
   projectCount,
+  careerStart,
 }: {
   relatedExperience: PortfolioExperience[];
   projectCount: number;
+  careerStart: number;
 }) {
   const { t, formatNumber } = useI18n();
   const reduced = useReducedMotion();
@@ -37,7 +40,7 @@ function ExpertiseEvidence({
     const companiesByYear = new Map<number, string[]>();
 
     for (const experience of relatedExperience) {
-      const [start, end] = experienceYearRange(experience);
+      const [start, end] = experienceYearRange(experience, careerStart);
       for (let year = start; year <= end; year += 1) {
         activeYears.add(year);
         const companies = companiesByYear.get(year) ?? [];
@@ -47,8 +50,8 @@ function ExpertiseEvidence({
     }
 
     const years = Array.from(
-      { length: now - CAREER_START_YEAR + 1 },
-      (_, index) => CAREER_START_YEAR + index,
+      { length: Math.max(1, now - careerStart + 1) },
+      (_, index) => careerStart + index,
     );
     const lastYear = activeYears.size > 0 ? Math.max(...activeYears) : 0;
     const firstYear = activeYears.size > 0 ? Math.min(...activeYears) : 0;
@@ -60,7 +63,7 @@ function ExpertiseEvidence({
       spanYears: activeYears.size > 0 ? lastYear - firstYear + 1 : 0,
       isCurrent: lastYear >= now,
     };
-  }, [now, relatedExperience]);
+  }, [careerStart, now, relatedExperience]);
 
   if (relatedExperience.length === 0) return null;
 
@@ -160,6 +163,7 @@ export function ExpertisePage() {
   const { content, locale } = usePortfolioData();
   const { t, lang } = useI18n();
   const reduced = useReducedMotion();
+  const careerStart = careerStartYear(content.experiences) ?? new Date().getFullYear();
   const [activeId, setActiveId] = useState(content.expertise[0]?.id ?? "");
 
   useEffect(() => {
@@ -186,6 +190,7 @@ export function ExpertisePage() {
       <Seo
         title={t("expt.eyebrow")}
         description={t("expt.intro")}
+        siteName={content.profile?.name}
         path="/expertise"
         locale={locale}
       />
@@ -258,6 +263,7 @@ export function ExpertisePage() {
                 <ExpertiseEvidence
                   relatedExperience={relatedExperience}
                   projectCount={relatedProjects.length}
+                  careerStart={careerStart}
                 />
 
                 {relatedExperience.length > 0 ? (

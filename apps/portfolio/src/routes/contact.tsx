@@ -20,6 +20,7 @@ import { Form, Link, useActionData, useNavigation } from "react-router";
 import { EmptyState } from "@/components/feedback";
 import { PageBackdrop } from "@/components/reference-backgrounds";
 import { Eyebrow } from "@/components/reference-home/ui";
+import { linkLabel } from "@/lib/content";
 import type { ContactActionData } from "@/lib/loaders";
 import { localizedPath } from "@/lib/locale";
 import { personStructuredData, Seo } from "@/lib/seo";
@@ -189,6 +190,7 @@ export function ContactPage() {
       <Seo
         title={t("contact.eyebrow")}
         description={t("contact.intro")}
+        siteName={profile.name}
         path="/contact"
         locale={locale}
         structuredData={[
@@ -244,7 +246,7 @@ export function ContactPage() {
                   <span className="grid h-9 w-9 place-items-center rounded-md border border-border transition-colors group-hover:border-signal/50">
                     <Github aria-hidden className="h-4 w-4" />
                   </span>
-                  github.com/A7med-Sghaier
+                  {linkLabel(profile.links.github)}
                 </a>
               ) : null}
               {profile.links.linkedin ? (
@@ -257,7 +259,7 @@ export function ContactPage() {
                   <span className="grid h-9 w-9 place-items-center rounded-md border border-border transition-colors group-hover:border-signal/50">
                     <Linkedin aria-hidden className="h-4 w-4" />
                   </span>
-                  linkedin.com/in/ahmed-sghaier
+                  {linkLabel(profile.links.linkedin)}
                 </a>
               ) : null}
             </div>

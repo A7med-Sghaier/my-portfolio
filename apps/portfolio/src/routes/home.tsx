@@ -62,6 +62,7 @@ export function HomePage() {
       <Seo
         title={`${profile.name} — ${profile.title}`}
         description={`${profile.positioning} ${profile.statement}`}
+        siteName={profile.name}
         path="/"
         locale={locale}
         imageAlt={`${profile.name}, ${profile.title}`}
@@ -138,7 +139,7 @@ export function HomePage() {
       </Section>
 
       <div className="mt-24 md:mt-32">
-        <AiEngineering />
+        <AiEngineering monogram={profile.monogram} />
       </div>
 
       <Section>
