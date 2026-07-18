@@ -74,6 +74,33 @@ export function localeFor(lang: Lang): string {
   return LANGS.find(({ code }) => code === lang)?.locale ?? "en-US";
 }
 
+export type MessageOverrides = Partial<Record<Lang, Record<string, string>>>;
+
+// Remotely managed copy loaded at runtime (the admin edits it). The bundled
+// dictionaries stay authoritative for any key or locale without an override.
+let messageOverrides: MessageOverrides = {};
+let overridesVersion = 0;
+const overrideListeners = new Set<() => void>();
+
+export function setMessageOverrides(overrides: MessageOverrides): void {
+  messageOverrides = overrides;
+  overridesVersion += 1;
+  for (const listener of overrideListeners) listener();
+}
+
+export function getMessageOverrides(): MessageOverrides {
+  return messageOverrides;
+}
+
+export function subscribeToMessageOverrides(listener: () => void): () => void {
+  overrideListeners.add(listener);
+  return () => overrideListeners.delete(listener);
+}
+
+export function getMessageOverridesVersion(): number {
+  return overridesVersion;
+}
+
 export function interpolate(template: string, values: TranslationValues = {}): string {
   return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (token, key: string) =>
     Object.prototype.hasOwnProperty.call(values, key) ? String(values[key]) : token,
@@ -81,7 +108,13 @@ export function interpolate(template: string, values: TranslationValues = {}): s
 }
 
 export function translate(lang: Lang, key: TKey, values?: TranslationValues): string {
-  return interpolate(messages[lang][key] ?? messages.en[key] ?? key, values);
+  const template =
+    messageOverrides[lang]?.[key] ??
+    messages[lang][key] ??
+    messageOverrides.en?.[key] ??
+    messages.en[key] ??
+    key;
+  return interpolate(template, values);
 }
 
 export function createTranslator(lang: Lang) {

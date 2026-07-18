@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   I18nProvider,
@@ -7,15 +7,19 @@ import {
   dirFor,
   interpolate,
   messages,
+  setMessageOverrides,
   translate,
   useI18n,
 } from ".";
+import { act } from "react";
 
 afterEach(() => {
+  cleanup();
   window.localStorage.clear();
   document.documentElement.lang = "en";
   document.documentElement.dir = "ltr";
   delete document.documentElement.dataset.lang;
+  setMessageOverrides({});
 });
 
 describe("dictionary contract", () => {
@@ -26,7 +30,7 @@ describe("dictionary contract", () => {
     for (const { code } of LANGS) {
       expect(Object.keys(messages[code]).sort()).toEqual(englishKeys);
     }
-    expect(englishKeys).toHaveLength(844);
+    expect(englishKeys).toHaveLength(940);
   });
 
   it("rejects missing and extra external dictionary keys", () => {
@@ -118,5 +122,33 @@ describe("I18nProvider", () => {
       </I18nProvider>,
     );
     expect(screen.getByTestId("state")).toHaveTextContent("en:ltr:About");
+  });
+});
+
+describe("message overrides", () => {
+  it("prefers an override, then the bundled locale, then bundled English", () => {
+    setMessageOverrides({ de: { "nav.contact": "Schreib mir" } });
+    expect(translate("de", "nav.contact")).toBe("Schreib mir");
+    expect(translate("de", "nav.about")).toBe("Über mich");
+    expect(translate("fr", "nav.contact")).toBe("Contact");
+    setMessageOverrides({});
+    expect(translate("de", "nav.contact")).toBe("Kontakt");
+  });
+
+  it("interpolates values inside overridden templates", () => {
+    setMessageOverrides({ en: { "nav.contact": "Contact {name}" } });
+    expect(translate("en", "nav.contact", { name: "Ahmed" })).toBe("Contact Ahmed");
+  });
+
+  it("re-renders provider consumers when overrides change at runtime", async () => {
+    render(
+      <I18nProvider initialLanguage="en" storageKey="test.lang">
+        <Harness />
+      </I18nProvider>,
+    );
+    expect(screen.getByTestId("state")).toHaveTextContent("en:ltr:About");
+
+    act(() => setMessageOverrides({ en: { "nav.about": "Story" } }));
+    await waitFor(() => expect(screen.getByTestId("state")).toHaveTextContent("en:ltr:Story"));
   });
 });

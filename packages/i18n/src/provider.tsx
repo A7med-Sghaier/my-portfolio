@@ -5,12 +5,15 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import {
   dirFor,
+  getMessageOverridesVersion,
   isLang,
   localeFor,
+  subscribeToMessageOverrides,
   translate,
   type Direction,
   type Lang,
@@ -99,9 +102,17 @@ export function I18nProvider({
     };
   }, [direction, lang, onLanguageChange, persist, storageKey]);
 
+  // Re-renders consumers when remotely managed copy arrives or changes.
+  const overridesVersion = useSyncExternalStore(
+    subscribeToMessageOverrides,
+    getMessageOverridesVersion,
+    getMessageOverridesVersion,
+  );
+
   const t = useCallback(
     (key: TKey, values?: TranslationValues) => translate(lang, key, values),
-    [lang],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- overridesVersion invalidates translate's module-level source.
+    [lang, overridesVersion],
   );
   const formatNumber = useCallback(
     (value: number, options?: Intl.NumberFormatOptions) =>
