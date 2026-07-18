@@ -1,5 +1,5 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
-import { translate, type Lang } from "@portfolio/i18n";
+import { setMessageOverrides, translate, type Lang } from "@portfolio/i18n";
 import {
   contactReference,
   normalizeContent,
@@ -30,10 +30,14 @@ export interface RootLoaderData {
 export async function rootLoader({ request }: LoaderFunctionArgs): Promise<RootLoaderData> {
   const locale = localeFromRequest(request);
   const client = getApiClient();
-  const [contentResponse, projectsResponse] = await Promise.all([
+  const [contentResponse, projectsResponse, uiMessages] = await Promise.all([
     client.getPublicContent(locale, request.signal),
     client.listPublicProjects(locale, request.signal),
+    // Admin-managed copy is an enhancement; the bundled dictionaries keep the
+    // site fully translated when the endpoint is unavailable.
+    client.getUiMessages(request.signal).catch(() => ({})),
   ]);
+  setMessageOverrides(uiMessages);
   const content = normalizeContent(contentResponse);
   const projects = projectsFromResponse(projectsResponse);
 

@@ -37,6 +37,7 @@ const navigationItems = [
   { to: "/experience", key: "nav.experience" },
   { to: "/projects", key: "nav.projects" },
   { to: "/expertise", key: "nav.expertise" },
+  { to: "/ai-lab", key: "nav.aiLab" },
   { to: "/resume", key: "nav.resume" },
   { to: "/contact", key: "nav.contact" },
 ] as const;
@@ -277,7 +278,7 @@ function SiteHeader({
           aria-label={`${profileName} — ${t("nav.home")}`}
         >
           <ProfileAvatar name={profileName} src={profile?.avatarUrl} />
-          <span className="flex flex-col leading-none">
+          <span className="flex flex-col gap-1 leading-none">
             <span
               className="font-display tracking-tight"
               style={{ fontSize: "1.05rem", fontWeight: 600 }}

@@ -3,22 +3,31 @@ import type {
   AdminResource,
   AdminResourceInputMap,
   AdminResourceMap,
+  AiStatus,
+  AiTranslateRequest,
+  AiTranslation,
   AssistantAnswer,
   AssistantAskRequest,
   ContactRequest,
+  IntakeDemo,
+  MessageReplyDraft,
   ContentSnapshot,
   Dashboard,
   GitHubSyncPreview,
   GitHubSyncStatus,
   Message,
   Project,
+  ProjectRegenerateRequest,
+  ProjectRegeneration,
   PublicContent,
   ReorderRequest,
   SessionState,
   Setting,
+  Locale,
   TicketLookupRequest,
   TicketReplyRequest,
   TicketStatus,
+  UiMessageBundle,
 } from "@portfolio/core";
 
 export class ApiError extends Error {
@@ -60,7 +69,15 @@ export interface PortfolioApiClient {
   ): Promise<{ ref: string; status: TicketStatus; createdAt: string }>;
   lookupTicket(input: TicketLookupRequest, signal?: AbortSignal): Promise<Message>;
   askAssistant(input: AssistantAskRequest, signal?: AbortSignal): Promise<AssistantAnswer>;
+  runIntakeDemo(url: string, signal?: AbortSignal): Promise<IntakeDemo>;
   replyToTicket(input: TicketReplyRequest, signal?: AbortSignal): Promise<Message>;
+  getUiMessages(signal?: AbortSignal): Promise<UiMessageBundle>;
+  updateUiMessage(
+    key: string,
+    values: Partial<Record<Locale, string | null>>,
+    signal?: AbortSignal,
+  ): Promise<Partial<Record<Locale, string>>>;
+  resetUiMessage(key: string, signal?: AbortSignal): Promise<void>;
   getPublicCsrfToken(signal?: AbortSignal): Promise<{ csrfToken: string }>;
   getAdminCsrfToken(signal?: AbortSignal): Promise<{ csrfToken: string }>;
   getCsrfToken(signal?: AbortSignal): Promise<{ csrfToken: string }>;
@@ -68,6 +85,13 @@ export interface PortfolioApiClient {
   login(input: AdminLoginRequest, signal?: AbortSignal): Promise<SessionState>;
   logout(signal?: AbortSignal): Promise<void>;
   getDashboard(signal?: AbortSignal): Promise<Dashboard>;
+  getAiStatus(signal?: AbortSignal): Promise<AiStatus>;
+  aiTranslate(input: AiTranslateRequest, signal?: AbortSignal): Promise<AiTranslation>;
+  suggestMessageReply(
+    id: string,
+    instruction?: string,
+    signal?: AbortSignal,
+  ): Promise<MessageReplyDraft>;
   getGitHubStatus(signal?: AbortSignal): Promise<GitHubSyncStatus>;
   previewGitHubSync(signal?: AbortSignal): Promise<GitHubSyncPreview>;
   adoptRepository(
@@ -82,6 +106,10 @@ export interface PortfolioApiClient {
     value: string,
     signal?: AbortSignal,
   ): Promise<{ dismissed: true }>;
+  regenerateProject(
+    input: ProjectRegenerateRequest,
+    signal?: AbortSignal,
+  ): Promise<ProjectRegeneration>;
   exportContent(signal?: AbortSignal): Promise<ContentSnapshot>;
   importContent(
     snapshot: ContentSnapshot,
@@ -224,11 +252,32 @@ export function createApiClient(options: ApiClientOptions): PortfolioApiClient {
         body: input,
         ...(signal ? { signal } : {}),
       }),
+    runIntakeDemo: (url, signal) =>
+      request("/api/public/intake-demo", {
+        method: "POST",
+        body: { url },
+        csrf: "public",
+        ...(signal ? { signal } : {}),
+      }),
     replyToTicket: (input, signal) =>
       request("/api/ticket/reply", {
         method: "POST",
         body: input,
         csrf: "public",
+        ...(signal ? { signal } : {}),
+      }),
+    getUiMessages: (signal) => request("/api/ui-messages", signal ? { signal } : {}),
+    updateUiMessage: (key, values, signal) =>
+      request(`/api/admin/ui-messages/${encodeURIComponent(key)}`, {
+        method: "PUT",
+        body: { values },
+        csrf: "admin",
+        ...(signal ? { signal } : {}),
+      }),
+    resetUiMessage: (key, signal) =>
+      request(`/api/admin/ui-messages/${encodeURIComponent(key)}`, {
+        method: "DELETE",
+        csrf: "admin",
         ...(signal ? { signal } : {}),
       }),
     getPublicCsrfToken,
@@ -258,6 +307,21 @@ export function createApiClient(options: ApiClientOptions): PortfolioApiClient {
       adminCsrfToken = undefined;
     },
     getDashboard: (signal) => request("/api/admin/dashboard", signal ? { signal } : {}),
+    getAiStatus: (signal) => request("/api/admin/ai/status", signal ? { signal } : {}),
+    aiTranslate: (input, signal) =>
+      request("/api/admin/ai/translate", {
+        method: "POST",
+        body: input,
+        csrf: "admin",
+        ...(signal ? { signal } : {}),
+      }),
+    suggestMessageReply: (id, instruction, signal) =>
+      request(`/api/admin/messages/${encodeURIComponent(id)}/suggest-reply`, {
+        method: "POST",
+        body: instruction ? { instruction } : {},
+        csrf: "admin",
+        ...(signal ? { signal } : {}),
+      }),
     getGitHubStatus: (signal) => request("/api/admin/github/status", signal ? { signal } : {}),
     previewGitHubSync: (signal) =>
       request("/api/admin/github/preview", {
@@ -277,6 +341,13 @@ export function createApiClient(options: ApiClientOptions): PortfolioApiClient {
         method: "POST",
         csrf: "admin",
         body: { id, value },
+        ...(signal ? { signal } : {}),
+      }),
+    regenerateProject: (input, signal) =>
+      request("/api/admin/projects/regenerate", {
+        method: "POST",
+        csrf: "admin",
+        body: input,
         ...(signal ? { signal } : {}),
       }),
     exportContent: (signal) => request("/api/admin/content/export", signal ? { signal } : {}),

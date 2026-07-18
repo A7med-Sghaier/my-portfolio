@@ -1,5 +1,16 @@
 import { useI18n, type TKey } from "@portfolio/i18n";
-import { Boxes, Braces, Cpu, GitBranch, Sparkles, Workflow } from "lucide-react";
+import {
+  ArrowUpRight,
+  Boxes,
+  Braces,
+  Cpu,
+  FlaskConical,
+  GitBranch,
+  Sparkles,
+  Workflow,
+} from "lucide-react";
+import { Link } from "react-router";
+import { localizedPath } from "@/lib/locale";
 import { DataFlow, IntelligenceField } from "./backgrounds";
 import { Reveal } from "./motion";
 import { Eyebrow } from "./ui";
@@ -17,7 +28,7 @@ const intelligence: { icon: typeof Cpu; key: TKey }[] = [
 ];
 
 export function AiEngineering({ monogram }: { monogram: string }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
   return (
     <section className="relative overflow-hidden border-y border-border">
@@ -91,6 +102,20 @@ export function AiEngineering({ monogram }: { monogram: string }) {
               ))}
             </ul>
           </Reveal>
+        </div>
+
+        <div className="mt-12 flex justify-center">
+          <Link
+            to={localizedPath("/ai-lab", lang)}
+            className="inline-flex min-h-11 items-center gap-2 rounded-full border border-signal/40 bg-card/70 px-5 text-sm font-medium backdrop-blur-sm transition-[border-color,transform] hover:-translate-y-0.5 hover:border-signal"
+          >
+            <FlaskConical aria-hidden className="h-4 w-4 text-signal" />
+            {t("ai.lab.cta")}
+            <ArrowUpRight
+              aria-hidden
+              className="h-3.5 w-3.5 text-muted-foreground rtl:-scale-x-100"
+            />
+          </Link>
         </div>
       </div>
     </section>

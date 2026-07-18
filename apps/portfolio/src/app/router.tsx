@@ -57,6 +57,13 @@ export const router = createBrowserRouter([
         },
       },
       {
+        path: "ai-lab",
+        lazy: async () => {
+          const { AiLabPage } = await import("@/routes/ai-lab");
+          return { Component: AiLabPage };
+        },
+      },
+      {
         path: "resume",
         lazy: async () => {
           const { ResumePage } = await import("@/routes/resume");

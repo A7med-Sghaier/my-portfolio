@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { setMessageOverrides, translate } from "@portfolio/i18n";
 import { contactAction, projectLoader, rootLoader, ticketAction } from "./loaders";
 import { setApiClientForTests, type PortfolioPublicClient } from "./api";
 
@@ -64,6 +65,7 @@ function client(overrides: Partial<PortfolioPublicClient> = {}): PortfolioPublic
       thread: [],
     }),
     replyToTicket: vi.fn().mockResolvedValue({}),
+    getUiMessages: vi.fn().mockResolvedValue({}),
     ...overrides,
   } as unknown as PortfolioPublicClient;
 }
@@ -90,7 +92,10 @@ function actionArgs(url: string, values: Record<string, string>): ActionFunction
   } as unknown as ActionFunctionArgs;
 }
 
-afterEach(() => setApiClientForTests(null));
+afterEach(() => {
+  setApiClientForTests(null);
+  setMessageOverrides({});
+});
 
 describe("portfolio data routes", () => {
   it("loads localized content and project detail from the API", async () => {
@@ -109,6 +114,21 @@ describe("portfolio data routes", () => {
     expect(api.getPublicContent).toHaveBeenCalledWith("de", expect.any(AbortSignal));
     expect(project.project?.slug).toBe("case-study");
     expect(api.getPublicProject).toHaveBeenCalledWith("case-study", "de", expect.any(AbortSignal));
+  });
+
+  it("applies admin-managed UI copy and survives the endpoint failing", async () => {
+    const api = client({
+      getUiMessages: vi.fn().mockResolvedValue({ de: { "nav.contact": "Schreib mir" } }),
+    });
+    setApiClientForTests(api);
+
+    await rootLoader(loaderArgs("https://portfolio.test/?lang=de"));
+    expect(translate("de", "nav.contact")).toBe("Schreib mir");
+
+    const failing = client({ getUiMessages: vi.fn().mockRejectedValue(new Error("offline")) });
+    setApiClientForTests(failing);
+    await expect(rootLoader(loaderArgs("https://portfolio.test/"))).resolves.toBeTruthy();
+    expect(translate("de", "nav.contact")).toBe("Kontakt");
   });
 
   it("validates and submits the contact form through the API", async () => {

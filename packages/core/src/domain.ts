@@ -149,6 +149,98 @@ export const ProjectSchema = ProjectInputSchema.extend({
 export type ProjectInput = z.input<typeof ProjectInputSchema>;
 export type Project = z.infer<typeof ProjectSchema>;
 
+// Regeneration rebuilds a project's editable copy on demand: from the linked
+// repository when one is set, otherwise from the operator-entered fields. The
+// result is returned to the editor for review — nothing is persisted.
+export const ProjectRegenerationFieldNames = [
+  "title",
+  "tagline",
+  "year",
+  "stack",
+  "overview",
+  "problem",
+  "roleDetail",
+  "architecture",
+  "frontend",
+  "backend",
+  "database",
+  "security",
+  "performance",
+  "testing",
+  "cicd",
+  "results",
+  "metrics",
+  "note",
+] as const;
+export type ProjectRegenerationFieldName = (typeof ProjectRegenerationFieldNames)[number];
+
+export const ProjectRegenerateRequestSchema = z.object({
+  repoUrl: z.string().trim().url().max(2_048).nullable().optional(),
+  // When present, only these fields are regenerated (and returned); omitted
+  // means the full field set.
+  fields: z.array(z.enum(ProjectRegenerationFieldNames)).min(1).max(50).optional(),
+  project: z
+    .object({
+      title: z.string().trim().max(240).default(""),
+      tagline: z.string().trim().max(1_000).default(""),
+      year: z.string().trim().max(120).default(""),
+      role: z.string().trim().max(500).default(""),
+      stack: z.array(z.string().trim().max(160)).max(100).default([]),
+      overview: z.string().max(20_000).default(""),
+      problem: z.string().max(20_000).default(""),
+      userGroups: z.array(z.string().max(1_000)).max(50).default([]),
+      roleDetail: z.string().max(20_000).default(""),
+      architecture: z.array(z.string().max(2_000)).max(100).default([]),
+      frontend: z.string().max(20_000).default(""),
+      backend: z.string().max(20_000).default(""),
+      database: z.string().max(20_000).default(""),
+      security: z.string().max(20_000).default(""),
+      performance: z.string().max(20_000).default(""),
+      testing: z.string().max(20_000).default(""),
+      cicd: z.string().max(20_000).default(""),
+      results: z.array(z.string().max(2_000)).max(100).default([]),
+      metrics: z
+        .array(z.object({ value: z.string().max(100), label: z.string().max(240) }))
+        .max(50)
+        .default([]),
+      note: z.string().max(20_000).default(""),
+    })
+    .default({}),
+});
+export type ProjectRegenerateRequest = z.input<typeof ProjectRegenerateRequestSchema>;
+export type ProjectRegenerateContent = z.infer<typeof ProjectRegenerateRequestSchema>["project"];
+
+/** Only fields the regeneration actually produced are present — absent fields keep their current value in the editor. */
+export type ProjectRegenerationFields = Partial<
+  Pick<
+    Project,
+    | "title"
+    | "tagline"
+    | "year"
+    | "stack"
+    | "overview"
+    | "problem"
+    | "roleDetail"
+    | "architecture"
+    | "frontend"
+    | "backend"
+    | "database"
+    | "security"
+    | "performance"
+    | "testing"
+    | "cicd"
+    | "results"
+  > & {
+    metrics: Array<{ value: string; label: string }>;
+    note: string;
+  }
+>;
+export type ProjectRegeneration = {
+  fields: ProjectRegenerationFields;
+  mode: "generated" | "extracted";
+  source: "repository" | "content";
+};
+
 export const ExperienceInputSchema = z.object({
   id: IdentifierSchema,
   company: z.string().trim().min(1).max(240),
@@ -273,6 +365,29 @@ export const TranslationSchema = TranslationInputSchema.extend({
 export type TranslationInput = z.input<typeof TranslationInputSchema>;
 export type Translation = z.infer<typeof TranslationSchema>;
 
+export const UiMessageKeySchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(200)
+  .regex(/^[a-zA-Z0-9]+(?:[._-][a-zA-Z0-9]+)*$/);
+export const UiMessageValueSchema = z.string().max(20_000);
+export const UiMessageInputSchema = z.object({
+  key: UiMessageKeySchema,
+  locale: LocaleSchema,
+  value: UiMessageValueSchema,
+});
+export type UiMessageInput = z.infer<typeof UiMessageInputSchema>;
+
+// A localized-copy edit for one key: a string overrides that locale, null
+// clears the override so the bundled default applies again.
+export const UiMessageUpdateSchema = z.object({
+  values: z.record(LocaleSchema, UiMessageValueSchema.nullable()),
+});
+export type UiMessageUpdate = z.infer<typeof UiMessageUpdateSchema>;
+
+export type UiMessageBundle = Partial<Record<Locale, Record<string, string>>>;
+
 export const SettingInputSchema = z.object({
   key: IdentifierSchema,
   value: JsonValueSchema,
@@ -318,6 +433,94 @@ export const AssistantAskRequestSchema = z.object({
 });
 export type AssistantAskRequest = z.input<typeof AssistantAskRequestSchema>;
 export type AssistantAnswer = { text: string };
+
+// ── Admin AI toolbox ─────────────────────────────────────────────────────
+// Every AI feature is optional: `configured` reflects whether an Ollama URL
+// is set at all, `reachable` whether the instance answered just now. The
+// admin uses this to decide which AI affordances to render.
+export type AiStatus = {
+  configured: boolean;
+  reachable: boolean;
+  models: { assistant: string; intake: string };
+  /** Model tags installed on the Ollama instance; empty when unreachable. */
+  installed: string[];
+};
+
+export const AiTranslateRequestSchema = z.object({
+  /** Source texts (English), keyed by a caller-chosen identifier. */
+  texts: z.record(z.string().min(1).max(200), z.string().min(1).max(4_000)).refine((value) => {
+    const size = Object.keys(value).length;
+    return size >= 1 && size <= 40;
+  }, "Between 1 and 40 texts per request."),
+  targets: z
+    .array(LocaleSchema.exclude(["en"]))
+    .min(1)
+    .max(3),
+});
+export type AiTranslateRequest = z.input<typeof AiTranslateRequestSchema>;
+/** Locales the model failed on are absent — the caller keeps its values. */
+export type AiTranslation = { texts: Partial<Record<Locale, Record<string, string>>> };
+
+export const MessageReplyDraftRequestSchema = z.object({
+  /** Optional operator steering, e.g. "decline politely" or "propose a call". */
+  instruction: z.string().trim().max(500).optional(),
+});
+export type MessageReplyDraftRequest = z.input<typeof MessageReplyDraftRequestSchema>;
+export type MessageReplyDraft = { text: string };
+
+// ── Public intake demo ───────────────────────────────────────────────────
+// Visitors run the repository-intake pipeline against any public GitHub
+// repository to see how the studio drafts a case study. Nothing is persisted.
+export const IntakeDemoRequestSchema = z.object({
+  url: z.string().trim().url().max(2_048),
+});
+export type IntakeDemoRequest = z.input<typeof IntakeDemoRequestSchema>;
+
+export type IntakeDemoStage = {
+  id: "fetch" | "extract" | "generate";
+  status: "ok" | "skipped" | "failed";
+  durationMs: number;
+};
+
+export type IntakeDemoDraft = Pick<
+  ProjectInput,
+  | "title"
+  | "tagline"
+  | "year"
+  | "stack"
+  | "overview"
+  | "problem"
+  | "roleDetail"
+  | "architecture"
+  | "frontend"
+  | "backend"
+  | "database"
+  | "security"
+  | "performance"
+  | "testing"
+  | "cicd"
+  | "results"
+> & { metrics: Array<{ value: string; label: string }>; note: string };
+
+export type IntakeDemo = {
+  repo: {
+    fullName: string;
+    url: string;
+    description: string | null;
+    topics: string[];
+    language: string | null;
+    createdAt: string | null;
+    readmeChars: number;
+  };
+  stages: IntakeDemoStage[];
+  /** "generated" when the local model refined the draft, otherwise "extracted". */
+  mode: "generated" | "extracted";
+  /** Field names whose value came from the model rather than pure extraction. */
+  generatedFields: ProjectRegenerationFieldName[];
+  draft: IntakeDemoDraft;
+  /** The operator-review checklist the real intake would attach to the draft. */
+  review: string[];
+};
 
 export const TicketLookupRequestSchema = z.object({
   ref: z
@@ -499,6 +702,7 @@ export const ContentSnapshotSchema = z.object({
   performanceMetrics: z.array(PerformanceMetricInputSchema),
   principles: z.array(PrincipleInputSchema),
   translations: z.array(TranslationInputSchema),
+  uiMessages: z.array(UiMessageInputSchema).optional(),
   profiles: z.array(ProfileInputSchema).optional(),
   services: z.array(ServiceInputSchema).optional(),
   technologyEcosystem: TechnologyEcosystemSchema.optional(),

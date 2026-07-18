@@ -20,6 +20,8 @@ export type PortfolioPublicClient = Pick<
   | "lookupTicket"
   | "replyToTicket"
   | "askAssistant"
+  | "runIntakeDemo"
+  | "getUiMessages"
 >;
 
 let testClient: PortfolioPublicClient | null = null;
