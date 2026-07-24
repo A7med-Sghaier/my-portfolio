@@ -6,9 +6,9 @@
   --signal: oklch(0.72 0.15 174);
   --signal-foreground: oklch(0.18 0.02 174);
   --signal-2: oklch(0.62 0.14 55);
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
-  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
 }
 
 .dark {

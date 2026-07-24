@@ -1,5 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Geist:wght@300..700&family=JetBrains+Mono:wght@400;500;600&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@300..700&family=Reem+Kufi:wght@400..700&display=swap");
+/* Self-hosted fonts (never a CDN). @fontsource ships the woff2 files inside the
+   package; Vite bundles them and serves them from our own origin, so the CSP
+   stays style-src/font-src 'self'. */
+@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource-variable/geist/index.css";
+@import "@fontsource-variable/jetbrains-mono/index.css";
+@import "@fontsource-variable/cairo/index.css";
+@import "@fontsource-variable/reem-kufi/index.css";
 
 @source "./**/*.{js,ts,jsx,tsx}";
 @custom-variant dark (&:where(.dark, .dark *));
@@ -39,9 +45,9 @@
   --mk-chart-4: oklch(0.55 0.19 300);
   --mk-chart-5: oklch(0.62 0.18 20);
   --mk-radius: 0.5rem;
-  --mk-font-display: "Fraunces", ui-serif, Georgia, serif;
-  --mk-font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
-  --mk-font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --mk-font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --mk-font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --mk-font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
   --mk-shadow-sm: 0 1px 2px oklch(0.18 0.01 265 / 0.06);
   --mk-shadow-lg: 0 18px 60px oklch(0.18 0.01 265 / 0.16);
 
@@ -185,8 +191,8 @@
   }
 
   [dir="rtl"] {
-    --mk-font-display: "Reem Kufi", "Cairo", ui-serif, sans-serif;
-    --mk-font-sans: "Cairo", ui-sans-serif, system-ui, sans-serif;
+    --mk-font-display: "Reem Kufi Variable", "Cairo Variable", ui-serif, sans-serif;
+    --mk-font-sans: "Cairo Variable", ui-sans-serif, system-ui, sans-serif;
   }
 
   [lang="ar"] {
