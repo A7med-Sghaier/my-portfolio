@@ -103,8 +103,11 @@ function StageRail({
         const state: "idle" | "running" | "ok" | "skipped" | "failed" = pending
           ? currentPending === stage.id
             ? "running"
-            : PENDING_THRESHOLDS.findIndex((entry) => entry.id === stage.id) <
-                PENDING_THRESHOLDS.findIndex((entry) => entry.id === currentPending)
+            : // Order by the full STAGES list, not PENDING_THRESHOLDS (which omits
+              // "review"): otherwise findIndex returns -1 for review and it always
+              // renders "ok" — showing a check before generation has finished.
+              STAGES.findIndex((entry) => entry.id === stage.id) <
+                STAGES.findIndex((entry) => entry.id === currentPending)
               ? "ok"
               : "idle"
           : result
