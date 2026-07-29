@@ -435,14 +435,14 @@ export type AssistantAskRequest = z.input<typeof AssistantAskRequestSchema>;
 export type AssistantAnswer = { text: string };
 
 // ── Admin AI toolbox ─────────────────────────────────────────────────────
-// Every AI feature is optional: `configured` reflects whether an Ollama URL
-// is set at all, `reachable` whether the instance answered just now. The
-// admin uses this to decide which AI affordances to render.
+// Every AI feature is optional: `configured` reflects whether an AI provider
+// is set at all, `reachable` whether the engine answered just now. The admin
+// uses this to decide which AI affordances to render.
 export type AiStatus = {
   configured: boolean;
   reachable: boolean;
   models: { assistant: string; intake: string };
-  /** Model tags installed on the Ollama instance; empty when unreachable. */
+  /** Models the configured provider reports; empty when unreachable. */
   installed: string[];
 };
 

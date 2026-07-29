@@ -988,7 +988,7 @@ export const de = {
   "ai.panel.title": "KI-Werkzeuge",
   "ai.panel.sub": "Wo das selbst gehostete Modell im Studio unterstützt.",
   "ai.panel.configureHint":
-    "OLLAMA_URL am API-Dienst setzen, um die KI-Unterstützung zu aktivieren. Ohne sie funktioniert weiterhin alles.",
+    "Einen KI-Anbieter am API-Dienst konfigurieren, um die KI-Unterstützung zu aktivieren. Ohne ihn funktioniert weiterhin alles.",
   "ai.feature.regenerate": "Projekt-Regenerierung",
   "ai.feature.regenerate.sub": "Fallstudien-Texte aus dem verknüpften Repository neu entwerfen",
   "ai.feature.translate": "Textübersetzung",

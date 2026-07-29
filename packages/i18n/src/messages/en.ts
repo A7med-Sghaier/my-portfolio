@@ -979,7 +979,7 @@ export const en = {
   "ai.panel.title": "AI toolbox",
   "ai.panel.sub": "Where the self-hosted model assists across the studio.",
   "ai.panel.configureHint":
-    "Set OLLAMA_URL on the API service to enable AI assistance. Everything keeps working without it.",
+    "Configure an AI provider on the API service to enable AI assistance. Everything keeps working without it.",
   "ai.feature.regenerate": "Project regeneration",
   "ai.feature.regenerate.sub": "Redraft case-study copy from the linked repository",
   "ai.feature.translate": "Copy translation",

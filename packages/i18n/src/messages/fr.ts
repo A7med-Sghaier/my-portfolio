@@ -983,7 +983,7 @@ export const fr = {
   "ai.panel.title": "Boîte à outils IA",
   "ai.panel.sub": "Là où le modèle auto-hébergé assiste le studio.",
   "ai.panel.configureHint":
-    "Définissez OLLAMA_URL sur le service API pour activer l'assistance IA. Tout continue de fonctionner sans elle.",
+    "Configurez un fournisseur d'IA sur le service API pour activer l'assistance IA. Tout continue de fonctionner sans lui.",
   "ai.feature.regenerate": "Régénération de projet",
   "ai.feature.regenerate.sub": "Réécrire les textes d'étude de cas depuis le dépôt lié",
   "ai.feature.translate": "Traduction des textes",
