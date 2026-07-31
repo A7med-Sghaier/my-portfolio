@@ -307,7 +307,7 @@ export function ContactPage() {
                         {t("contact.ticket.label")}
                       </p>
                       <div className="mt-3 flex items-center justify-center gap-2">
-                        <span className="font-mono text-[1.35rem] font-semibold tracking-widest text-signal">
+                        <span className="min-w-0 break-all font-mono text-lg font-semibold tracking-wide text-signal">
                           {actionData.ticketRef}
                         </span>
                         <button
@@ -316,7 +316,7 @@ export function ContactPage() {
                             void copyReference();
                           }}
                           aria-label={t("contact.ticket.copy")}
-                          className="grid h-7 w-7 place-items-center rounded-md border border-border text-muted-foreground transition-colors hover:border-signal/50 hover:text-signal"
+                          className="grid h-7 w-7 shrink-0 place-items-center rounded-md border border-border text-muted-foreground transition-colors hover:border-signal/50 hover:text-signal"
                         >
                           {copied ? (
                             <Check aria-hidden className="h-4 w-4 text-signal" />
