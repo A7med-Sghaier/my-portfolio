@@ -18,10 +18,11 @@ test-results/
 # testing
 /coverage
 
-# env — never commit secrets
+# env — never commit secrets (ignore every .env* except the committed *.example templates)
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+!.env.*.example
 
 # local database volumes and API state
 .postgres-data/
