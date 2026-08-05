@@ -1055,4 +1055,17 @@ export const fr = {
   "ailab.error.rate":
     "Le labo est limité en fréquence pour garder le modèle auto-hébergé réactif. Réessayez dans quelques minutes.",
   "ailab.error.failed": "L'exécution du pipeline a échoué. Veuillez réessayer.",
+  "ailab.scores.title": "Signal du brouillon",
+  "ailab.scores.readiness": "Maturité",
+  "ailab.scores.grounding": "Traçabilité",
+  "ailab.scores.grounding.sub": "{n} mots générés vérifiés dans le README",
+  "ailab.scores.grounding.verbatim": "Extraction seule — le texte provient mot pour mot du README",
+  "ailab.scores.coverage": "Couverture",
+  "ailab.scores.coverage.sub": "{n} champs d'étude de cas remplis sur {total}",
+  "ailab.scores.source": "Signal de la source",
+  "ailab.scores.source.sub": "{n} sections de README · {chars} caractères",
+  "ailab.scores.lift": "Apport de l'IA",
+  "ailab.scores.lift.sub": "{n} champs affinés au-delà de l'extraction déterministe",
+  "ailab.scores.note":
+    "Mesuré sur cette exécution. La maturité pondère traçabilité, couverture, signal de la source et la liste de contrôle de {n} points — pas la quantité d'IA employée.",
 } as const;

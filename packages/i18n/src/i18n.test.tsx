@@ -30,7 +30,7 @@ describe("dictionary contract", () => {
     for (const { code } of LANGS) {
       expect(Object.keys(messages[code]).sort()).toEqual(englishKeys);
     }
-    expect(englishKeys).toHaveLength(940);
+    expect(englishKeys).toHaveLength(952);
   });
 
   it("rejects missing and extra external dictionary keys", () => {

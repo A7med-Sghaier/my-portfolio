@@ -1049,4 +1049,17 @@ export const en = {
   "ailab.error.rate":
     "The lab is rate-limited to keep the self-hosted model responsive. Please try again in a few minutes.",
   "ailab.error.failed": "The pipeline run failed. Please try again.",
+  "ailab.scores.title": "Draft signal",
+  "ailab.scores.readiness": "Readiness",
+  "ailab.scores.grounding": "Grounding",
+  "ailab.scores.grounding.sub": "{n} generated words checked against the README",
+  "ailab.scores.grounding.verbatim": "Extraction only — the copy is taken from the README verbatim",
+  "ailab.scores.coverage": "Coverage",
+  "ailab.scores.coverage.sub": "{n} of {total} case-study fields filled",
+  "ailab.scores.source": "Source signal",
+  "ailab.scores.source.sub": "{n} README sections · {chars} characters",
+  "ailab.scores.lift": "AI lift",
+  "ailab.scores.lift.sub": "{n} fields refined beyond deterministic extraction",
+  "ailab.scores.note":
+    "Measured from this run. Readiness weights grounding, coverage, source signal and the {n}-item review checklist — not how much AI was involved.",
 } as const;

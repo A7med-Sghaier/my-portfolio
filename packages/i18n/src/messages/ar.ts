@@ -1019,4 +1019,17 @@ export const ar = {
   "ailab.error.rate":
     "المختبر محدود المعدل للحفاظ على استجابة النموذج المستضاف ذاتيًا. حاول مجددًا بعد دقائق.",
   "ailab.error.failed": "فشل تشغيل الخط. حاول مرة أخرى.",
+  "ailab.scores.title": "مؤشرات المسودة",
+  "ailab.scores.readiness": "الجاهزية",
+  "ailab.scores.grounding": "قابلية التتبّع",
+  "ailab.scores.grounding.sub": "تم التحقق من {n} كلمة مولّدة مقابل ملف README",
+  "ailab.scores.grounding.verbatim": "استخراج فقط — النص مأخوذ حرفيًا من ملف README",
+  "ailab.scores.coverage": "التغطية",
+  "ailab.scores.coverage.sub": "تم ملء {n} من أصل {total} من حقول دراسة الحالة",
+  "ailab.scores.source": "ثراء المصدر",
+  "ailab.scores.source.sub": "{n} أقسام في README · {chars} حرفًا",
+  "ailab.scores.lift": "إسهام الذكاء الاصطناعي",
+  "ailab.scores.lift.sub": "{n} حقلًا جرى تحسينها بعد الاستخراج الحتمي",
+  "ailab.scores.note":
+    "مقاسة من هذا التشغيل. تجمع الجاهزية بين قابلية التتبّع والتغطية وثراء المصدر وقائمة المراجعة المكوّنة من {n} بندًا — لا مقدار الذكاء الاصطناعي المستخدم.",
 } as const;

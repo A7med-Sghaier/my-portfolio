@@ -1060,4 +1060,17 @@ export const de = {
   "ailab.error.rate":
     "Das Labor ist ratenbegrenzt, damit das selbst gehostete Modell reaktionsschnell bleibt. Bitte versuchen Sie es in einigen Minuten erneut.",
   "ailab.error.failed": "Der Pipeline-Lauf ist fehlgeschlagen. Bitte erneut versuchen.",
+  "ailab.scores.title": "Entwurfs-Signal",
+  "ailab.scores.readiness": "Reifegrad",
+  "ailab.scores.grounding": "Belegbarkeit",
+  "ailab.scores.grounding.sub": "{n} generierte Wörter gegen die README geprüft",
+  "ailab.scores.grounding.verbatim": "Nur Extraktion — der Text stammt wörtlich aus der README",
+  "ailab.scores.coverage": "Abdeckung",
+  "ailab.scores.coverage.sub": "{n} von {total} Fallstudien-Feldern gefüllt",
+  "ailab.scores.source": "Quellensignal",
+  "ailab.scores.source.sub": "{n} README-Abschnitte · {chars} Zeichen",
+  "ailab.scores.lift": "KI-Zugewinn",
+  "ailab.scores.lift.sub": "{n} Felder über die deterministische Extraktion hinaus verfeinert",
+  "ailab.scores.note":
+    "Aus diesem Lauf gemessen. Der Reifegrad gewichtet Belegbarkeit, Abdeckung, Quellensignal und die Prüfliste mit {n} Punkten — nicht den Umfang des KI-Einsatzes.",
 } as const;
