@@ -502,6 +502,34 @@ export type IntakeDemoDraft = Pick<
   | "results"
 > & { metrics: Array<{ value: string; label: string }>; note: string };
 
+/**
+ * Measured qualities of a single demo run. Every number is derived from the
+ * run itself — README overlap, filled fields, repository metadata — so the
+ * scorecard reports what happened rather than decorating it.
+ */
+export type IntakeDemoScores = {
+  /** Weighted composite of grounding, coverage, source and review load, 0–100. */
+  readiness: number;
+  /** Share of generated content words that also appear in the README, 0–100. */
+  grounding: number;
+  /** Share of the 18 draft fields that came back filled, 0–100. */
+  coverage: number;
+  /** How much material the repository itself offered the pipeline, 0–100. */
+  source: number;
+  /** Share of fields the model improved on top of deterministic extraction, 0–100. */
+  lift: number;
+  /** The raw counts behind the scores, so the UI can caption them honestly. */
+  detail: {
+    fieldsFilled: number;
+    fieldsTotal: number;
+    fieldsGenerated: number;
+    /** Generated content words checked against the README (0 in extracted mode). */
+    wordsChecked: number;
+    readmeSections: number;
+    reviewNotes: number;
+  };
+};
+
 export type IntakeDemo = {
   repo: {
     fullName: string;
@@ -520,6 +548,8 @@ export type IntakeDemo = {
   draft: IntakeDemoDraft;
   /** The operator-review checklist the real intake would attach to the draft. */
   review: string[];
+  /** Measured quality of this run — see {@link IntakeDemoScores}. */
+  scores: IntakeDemoScores;
 };
 
 export const TicketLookupRequestSchema = z.object({
