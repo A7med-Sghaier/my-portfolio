@@ -11,10 +11,10 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useI18n, type TKey } from "@portfolio/i18n";
-import type { IntakeDemo, IntakeDemoStage } from "@portfolio/core";
+import type { IntakeDemo, IntakeDemoScores, IntakeDemoStage } from "@portfolio/core";
 import { ApiError } from "@portfolio/db/client";
 import { PageBackdrop } from "@/components/reference-about/page-backdrop";
-import { Reveal } from "@/components/reference-home/motion";
+import { CountUp, Reveal } from "@/components/reference-home/motion";
 import { Eyebrow, TechTag } from "@/components/reference-home/ui";
 import { getApiClient } from "@/lib/api";
 import { personStructuredData, Seo } from "@/lib/seo";
@@ -170,6 +170,157 @@ function StageRail({
         );
       })}
     </ol>
+  );
+}
+
+// A score is only as good as the palette it is read through: teal reads
+// "fine", amber "look at this", red "the repository did not give us enough".
+// Anything finer-grained would imply a precision these counts do not have.
+function scoreTone(value: number): string {
+  if (value >= 70) return "var(--signal)";
+  if (value >= 40) return "var(--signal-2)";
+  return "var(--destructive)";
+}
+
+const RING_RADIUS = 46;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
+function ReadinessRing({ value }: { value: number }) {
+  const { t } = useI18n();
+  const tone = scoreTone(value);
+  return (
+    <div
+      role="meter"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={t("ailab.scores.readiness")}
+      className="relative shrink-0"
+      style={{ width: "7rem", height: "7rem" }}
+    >
+      <svg aria-hidden viewBox="0 0 112 112" className="h-full w-full -rotate-90">
+        <circle
+          cx="56"
+          cy="56"
+          r={RING_RADIUS}
+          fill="none"
+          strokeWidth="7"
+          className="stroke-border"
+        />
+        <circle
+          cx="56"
+          cy="56"
+          r={RING_RADIUS}
+          fill="none"
+          strokeWidth="7"
+          strokeLinecap="round"
+          stroke={tone}
+          strokeDasharray={RING_CIRCUMFERENCE}
+          strokeDashoffset={RING_CIRCUMFERENCE * (1 - value / 100)}
+          style={{ transition: "stroke-dashoffset 1.6s cubic-bezier(0.22, 1, 0.36, 1)" }}
+          className="motion-reduce:transition-none"
+        />
+      </svg>
+      <div className="absolute inset-0 grid place-items-center text-center">
+        <div>
+          <CountUp
+            immediate
+            value={value}
+            className="font-display text-2xl font-semibold tracking-tight"
+          />
+          <p className="mt-0.5 font-mono text-[0.55rem] uppercase tracking-wider text-muted-foreground">
+            {t("ailab.scores.readiness")}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScoreMeter({ label, value, caption }: { label: string; value: number; caption: string }) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="text-xs font-medium">{label}</span>
+        <CountUp immediate value={value} className="font-mono text-xs text-muted-foreground" />
+      </div>
+      <div
+        role="meter"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={label}
+        className="mt-1.5 h-1 overflow-hidden rounded-full bg-secondary"
+      >
+        <div
+          className="h-full rounded-full motion-reduce:transition-none"
+          style={{
+            width: `${value}%`,
+            background: scoreTone(value),
+            transition: "width 1.6s cubic-bezier(0.22, 1, 0.36, 1)",
+          }}
+        />
+      </div>
+      <p className="mt-1.5 text-[0.68rem] leading-4 text-muted-foreground">{caption}</p>
+    </div>
+  );
+}
+
+// The page claims the pipeline only writes what it can trace back to the
+// repository. This measures that claim rather than restating it: every number
+// below is a count taken from the run the visitor just watched.
+function Scorecard({ scores, readmeChars }: { scores: IntakeDemoScores; readmeChars: number }) {
+  const { t, formatNumber } = useI18n();
+  const { detail } = scores;
+  const meters = [
+    {
+      label: t("ailab.scores.grounding"),
+      value: scores.grounding,
+      caption:
+        detail.wordsChecked > 0
+          ? t("ailab.scores.grounding.sub", { n: formatNumber(detail.wordsChecked) })
+          : t("ailab.scores.grounding.verbatim"),
+    },
+    {
+      label: t("ailab.scores.coverage"),
+      value: scores.coverage,
+      caption: t("ailab.scores.coverage.sub", {
+        n: formatNumber(detail.fieldsFilled),
+        total: formatNumber(detail.fieldsTotal),
+      }),
+    },
+    {
+      label: t("ailab.scores.source"),
+      value: scores.source,
+      caption: t("ailab.scores.source.sub", {
+        n: formatNumber(detail.readmeSections),
+        chars: formatNumber(readmeChars),
+      }),
+    },
+    {
+      label: t("ailab.scores.lift"),
+      value: scores.lift,
+      caption: t("ailab.scores.lift.sub", { n: formatNumber(detail.fieldsGenerated) }),
+    },
+  ];
+
+  return (
+    <section className="mb-4 rounded-2xl border border-border bg-card p-5">
+      <h2 className="font-mono text-[0.62rem] uppercase tracking-wider text-muted-foreground">
+        {t("ailab.scores.title")}
+      </h2>
+      <div className="mt-4 flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
+        <ReadinessRing value={scores.readiness} />
+        <div className="grid w-full min-w-0 flex-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+          {meters.map((meter) => (
+            <ScoreMeter key={meter.label} {...meter} />
+          ))}
+        </div>
+      </div>
+      <p className="mt-5 border-t border-border pt-3 text-[0.62rem] leading-4 text-muted-foreground">
+        {t("ailab.scores.note", { n: formatNumber(detail.reviewNotes) })}
+      </p>
+    </section>
   );
 }
 
@@ -426,6 +577,7 @@ export function AiLabPage() {
                       : t("ailab.mode.extracted")}
                   </p>
                 </div>
+                <Scorecard scores={result.scores} readmeChars={result.repo.readmeChars} />
                 <DraftPreview result={result} />
               </Reveal>
             ) : (
