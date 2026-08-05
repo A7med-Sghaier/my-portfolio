@@ -18,9 +18,10 @@ test-results/
 # testing
 /coverage
 
-# env — never commit secrets (ignore every .env* except the committed *.example templates)
-.env
-.env.*
+# env — never commit secrets (ignore every .env* except the committed *.example
+# templates). The pattern must be `.env*`, not `.env.*`: the dot-anchored form
+# misses editor/Finder duplicates like `.env copy`, which carry the same values.
+.env*
 !.env.example
 !.env.*.example
 
