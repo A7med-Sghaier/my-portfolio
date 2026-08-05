@@ -103,6 +103,7 @@ export function CountUp({
   decimals = 0,
   className,
   duration: animationDuration = 1.6,
+  immediate = false,
 }: {
   value: number;
   prefix?: string;
@@ -110,9 +111,17 @@ export function CountUp({
   decimals?: number;
   className?: string;
   duration?: number;
+  /**
+   * Count on mount instead of on scroll. Required wherever the number appears
+   * in response to an action rather than to scrolling: the scroll gate has a
+   * -20% margin, so a figure rendered below that line would sit at zero until
+   * the visitor happened to scroll — reading as a real value of 0.
+   */
+  immediate?: boolean;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-20% 0px" });
+  const scrolledIntoView = useInView(ref, { once: true, margin: "-20% 0px" });
+  const inView = immediate || scrolledIntoView;
   const reduce = useReducedMotion();
   const { formatNumber } = useI18n();
   const [display, setDisplay] = useState(0);
