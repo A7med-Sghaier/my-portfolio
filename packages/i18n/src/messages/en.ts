@@ -1032,8 +1032,41 @@ export const en = {
   "ailab.field.role": "Role",
   "ailab.field.note": "Notes",
   "ailab.field.metrics": "Metrics",
-  "ailab.sparse":
-    "This README is thin — the pipeline extracted what it could and left the rest empty rather than inventing content.",
+  "ailab.field.title": "Title",
+  "ailab.field.tagline": "Tagline",
+  "ailab.field.year": "Year",
+  "ailab.field.stack": "Stack",
+  "ailab.log.title": "Run log",
+  "ailab.log.elapsed": "{n} s",
+  "ailab.log.repo": "Repository resolved — {name}",
+  "ailab.log.topics": "{n} topics",
+  "ailab.log.readme": "README read — {n} characters",
+  "ailab.log.sections": "{n} README sections mapped to fields",
+  "ailab.log.field": "{field} — {n} characters",
+  "ailab.log.fieldItems": "{field} — {n} entries",
+  "ailab.log.grounding": "{n} README characters sent to the model",
+  "ailab.log.fallback.unavailable": "No model configured — the extracted draft stands",
+  "ailab.log.fallback.failed": "The model did not answer — the extracted draft stands",
+  "ailab.log.review": "{n} review notes attached for the operator",
+  "ailab.log.ready": "Draft ready",
+  "ailab.hint.fetch.1":
+    "The public GitHub API is read for metadata and the README — the repository is never cloned.",
+  "ailab.hint.fetch.2":
+    "Private repositories are refused even when the server's GitHub token could read them.",
+  "ailab.hint.extract.1":
+    "No model runs in this stage: README headings are matched to case-study fields by rule.",
+  "ailab.hint.extract.2":
+    "A field the README does not cover stays empty — for this pipeline an empty field is a correct answer.",
+  "ailab.hint.generate.1":
+    "The model sees the README and the repository metadata, and nothing else.",
+  "ailab.hint.generate.2":
+    "Years and figures are checked back against the README; anything not found there is discarded.",
+  "ailab.hint.generate.3":
+    "If the model fails or drifts, the extracted draft you just watched being built stands.",
+  "ailab.thin.title": "This README carries a project, not a case study",
+  "ailab.thin.body":
+    "It filled {n} of {total} case-study fields. The rest stayed empty because the repository never states them — the pipeline leaves a gap rather than inventing content, so a sparse draft here is a reading of the source, not a failed run.",
+  "ailab.thin.missing": "No section found for",
   "ailab.waiting":
     "The pipeline is reading the repository and drafting the case study. Grounded generation on a local model takes a moment.",
   "ailab.placeholder":

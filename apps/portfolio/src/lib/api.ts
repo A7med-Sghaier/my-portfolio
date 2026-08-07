@@ -21,6 +21,7 @@ export type PortfolioPublicClient = Pick<
   | "replyToTicket"
   | "askAssistant"
   | "runIntakeDemo"
+  | "streamIntakeDemo"
   | "getUiMessages"
 >;
 

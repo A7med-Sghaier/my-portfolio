@@ -1043,8 +1043,41 @@ export const de = {
   "ailab.field.role": "Rolle",
   "ailab.field.note": "Notizen",
   "ailab.field.metrics": "Kennzahlen",
-  "ailab.sparse":
-    "Diese README ist knapp — die Pipeline hat extrahiert, was möglich war, und den Rest leer gelassen, statt Inhalte zu erfinden.",
+  "ailab.field.title": "Titel",
+  "ailab.field.tagline": "Kurzbeschreibung",
+  "ailab.field.year": "Jahr",
+  "ailab.field.stack": "Stack",
+  "ailab.log.title": "Lauf-Protokoll",
+  "ailab.log.elapsed": "{n} s",
+  "ailab.log.repo": "Repository aufgelöst — {name}",
+  "ailab.log.topics": "{n} Themen",
+  "ailab.log.readme": "README gelesen — {n} Zeichen",
+  "ailab.log.sections": "{n} README-Abschnitte auf Felder abgebildet",
+  "ailab.log.field": "{field} — {n} Zeichen",
+  "ailab.log.fieldItems": "{field} — {n} Einträge",
+  "ailab.log.grounding": "{n} README-Zeichen an das Modell gesendet",
+  "ailab.log.fallback.unavailable": "Kein Modell konfiguriert — der extrahierte Entwurf gilt",
+  "ailab.log.fallback.failed": "Das Modell hat nicht geantwortet — der extrahierte Entwurf gilt",
+  "ailab.log.review": "{n} Prüfhinweise für die Redaktion angehängt",
+  "ailab.log.ready": "Entwurf fertig",
+  "ailab.hint.fetch.1":
+    "Gelesen werden Metadaten und README über die öffentliche GitHub-API — das Repository wird nie geklont.",
+  "ailab.hint.fetch.2":
+    "Private Repositories werden abgelehnt, selbst wenn das GitHub-Token des Servers sie lesen könnte.",
+  "ailab.hint.extract.1":
+    "In dieser Stufe läuft kein Modell: README-Überschriften werden regelbasiert auf Fallstudien-Felder abgebildet.",
+  "ailab.hint.extract.2":
+    "Ein Feld, das die README nicht abdeckt, bleibt leer — für diese Pipeline ist ein leeres Feld eine richtige Antwort.",
+  "ailab.hint.generate.1":
+    "Das Modell sieht die README und die Repository-Metadaten — und sonst nichts.",
+  "ailab.hint.generate.2":
+    "Jahreszahlen und Kennzahlen werden gegen die README geprüft; was dort nicht steht, wird verworfen.",
+  "ailab.hint.generate.3":
+    "Scheitert das Modell oder driftet es ab, gilt der extrahierte Entwurf, dessen Aufbau Sie gerade gesehen haben.",
+  "ailab.thin.title": "Diese README trägt ein Projekt, keine Fallstudie",
+  "ailab.thin.body":
+    "Sie hat {n} von {total} Feldern der Fallstudie gefüllt. Der Rest blieb leer, weil das Repository ihn nirgends benennt — die Pipeline lässt eine Lücke, statt Inhalte zu erfinden. Ein knapper Entwurf ist hier also eine Lesung der Quelle, kein fehlgeschlagener Lauf.",
+  "ailab.thin.missing": "Kein Abschnitt gefunden für",
   "ailab.waiting":
     "Die Pipeline liest das Repository und entwirft die Fallstudie. Fundierte Generierung auf einem lokalen Modell braucht einen Moment.",
   "ailab.placeholder":

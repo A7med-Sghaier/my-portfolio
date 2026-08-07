@@ -1038,8 +1038,40 @@ export const fr = {
   "ailab.field.role": "Rôle",
   "ailab.field.note": "Notes",
   "ailab.field.metrics": "Indicateurs",
-  "ailab.sparse":
-    "Ce README est mince — le pipeline a extrait ce qu'il pouvait et a laissé le reste vide plutôt que d'inventer du contenu.",
+  "ailab.field.title": "Titre",
+  "ailab.field.tagline": "Accroche",
+  "ailab.field.year": "Année",
+  "ailab.field.stack": "Stack",
+  "ailab.log.title": "Journal d'exécution",
+  "ailab.log.elapsed": "{n} s",
+  "ailab.log.repo": "Dépôt résolu — {name}",
+  "ailab.log.topics": "{n} sujets",
+  "ailab.log.readme": "README lu — {n} caractères",
+  "ailab.log.sections": "{n} sections du README associées à des champs",
+  "ailab.log.field": "{field} — {n} caractères",
+  "ailab.log.fieldItems": "{field} — {n} entrées",
+  "ailab.log.grounding": "{n} caractères du README envoyés au modèle",
+  "ailab.log.fallback.unavailable": "Aucun modèle configuré — le brouillon extrait fait foi",
+  "ailab.log.fallback.failed": "Le modèle n'a pas répondu — le brouillon extrait fait foi",
+  "ailab.log.review": "{n} notes de relecture jointes pour l'opérateur",
+  "ailab.log.ready": "Brouillon prêt",
+  "ailab.hint.fetch.1":
+    "Les métadonnées et le README sont lus via l'API publique de GitHub — le dépôt n'est jamais cloné.",
+  "ailab.hint.fetch.2":
+    "Les dépôts privés sont refusés, même si le jeton GitHub du serveur pouvait les lire.",
+  "ailab.hint.extract.1":
+    "Aucun modèle ne tourne à cette étape : les titres du README sont associés aux champs par règles.",
+  "ailab.hint.extract.2":
+    "Un champ que le README ne couvre pas reste vide — pour ce pipeline, un champ vide est une bonne réponse.",
+  "ailab.hint.generate.1": "Le modèle voit le README et les métadonnées du dépôt, et rien d'autre.",
+  "ailab.hint.generate.2":
+    "Les années et les chiffres sont revérifiés dans le README ; ce qui ne s'y trouve pas est écarté.",
+  "ailab.hint.generate.3":
+    "Si le modèle échoue ou dérive, le brouillon extrait que vous venez de voir se construire fait foi.",
+  "ailab.thin.title": "Ce README porte un projet, pas une étude de cas",
+  "ailab.thin.body":
+    "Il a rempli {n} champs d'étude de cas sur {total}. Le reste est resté vide parce que le dépôt ne l'énonce nulle part — le pipeline laisse un blanc plutôt que d'inventer du contenu. Un brouillon mince est donc ici une lecture de la source, pas un échec du traitement.",
+  "ailab.thin.missing": "Aucune section trouvée pour",
   "ailab.waiting":
     "Le pipeline lit le dépôt et rédige l'étude de cas. La génération fondée sur un modèle local prend un moment.",
   "ailab.placeholder":

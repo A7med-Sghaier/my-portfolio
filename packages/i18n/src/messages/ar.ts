@@ -1004,8 +1004,39 @@ export const ar = {
   "ailab.field.role": "الدور",
   "ailab.field.note": "ملاحظات",
   "ailab.field.metrics": "مؤشرات",
-  "ailab.sparse":
-    "ملف README هذا مقتضب — استخلص الخط ما أمكنه وترك الباقي فارغًا بدل اختلاق محتوى.",
+  "ailab.field.title": "العنوان",
+  "ailab.field.tagline": "الوصف المختصر",
+  "ailab.field.year": "السنة",
+  "ailab.field.stack": "التقنيات",
+  "ailab.log.title": "سجل التشغيل",
+  "ailab.log.elapsed": "{n} ث",
+  "ailab.log.repo": "تم تحديد المستودع — {name}",
+  "ailab.log.topics": "{n} وسوم",
+  "ailab.log.readme": "تمت قراءة README — {n} حرفًا",
+  "ailab.log.sections": "ربط {n} من أقسام README بالحقول",
+  "ailab.log.field": "{field} — {n} حرفًا",
+  "ailab.log.fieldItems": "{field} — {n} عناصر",
+  "ailab.log.grounding": "أُرسل {n} حرفًا من README إلى النموذج",
+  "ailab.log.fallback.unavailable": "لا نموذج مهيأ — المسودة المستخلصة هي المعتمدة",
+  "ailab.log.fallback.failed": "لم يستجب النموذج — المسودة المستخلصة هي المعتمدة",
+  "ailab.log.review": "أُرفقت {n} ملاحظات مراجعة للمشغّل",
+  "ailab.log.ready": "المسودة جاهزة",
+  "ailab.hint.fetch.1":
+    "تُقرأ البيانات الوصفية وملف README عبر واجهة GitHub العامة — لا يُستنسخ المستودع أبدًا.",
+  "ailab.hint.fetch.2":
+    "تُرفض المستودعات الخاصة حتى لو كان بإمكان رمز GitHub الخاص بالخادم قراءتها.",
+  "ailab.hint.extract.1":
+    "لا يعمل أي نموذج في هذه المرحلة: تُربط عناوين README بحقول دراسة الحالة وفق قواعد ثابتة.",
+  "ailab.hint.extract.2":
+    "أي حقل لا يغطيه README يبقى فارغًا — الحقل الفارغ إجابة صحيحة في هذا الخط.",
+  "ailab.hint.generate.1": "يرى النموذج ملف README وبيانات المستودع الوصفية فقط، لا شيء غير ذلك.",
+  "ailab.hint.generate.2": "تُراجَع السنوات والأرقام مقابل README؛ وكل ما لا يرد فيه يُستبعد.",
+  "ailab.hint.generate.3":
+    "إذا أخفق النموذج أو انحرف، تبقى المسودة المستخلصة التي شاهدت بناءها هي المعتمدة.",
+  "ailab.thin.title": "هذا الملف يحمل مشروعًا لا دراسة حالة",
+  "ailab.thin.body":
+    "ملأ {n} من {total} من حقول دراسة الحالة. بقي الباقي فارغًا لأن المستودع لا يذكره أصلًا — يترك الخط الفراغ بدل اختلاق محتوى، فالمسودة المقتضبة هنا قراءة للمصدر لا إخفاقًا في التشغيل.",
+  "ailab.thin.missing": "لم يُعثر على قسم لـ",
   "ailab.waiting":
     "يقرأ الخط المستودع ويصوغ دراسة الحالة. التوليد المستند إلى الوقائع على نموذج محلي يستغرق لحظات.",
   "ailab.placeholder": "شغّل الخط على مستودع لترى المسودة التي سيسلمها إلى الاستوديو.",

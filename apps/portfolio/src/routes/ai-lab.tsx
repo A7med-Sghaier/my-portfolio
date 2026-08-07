@@ -3,6 +3,7 @@ import {
   CircleCheck,
   CircleDashed,
   CircleSlash,
+  FileSearch,
   FlaskConical,
   GitBranch,
   ListChecks,
@@ -10,9 +11,17 @@ import {
   Play,
   Sparkles,
 } from "lucide-react";
+import { useReducedMotion } from "motion/react";
 import { useI18n, type TKey } from "@portfolio/i18n";
-import type { IntakeDemo, IntakeDemoScores, IntakeDemoStage } from "@portfolio/core";
+import type {
+  IntakeDemo,
+  IntakeDemoEvent,
+  IntakeDemoScores,
+  IntakeDemoStage,
+} from "@portfolio/core";
 import { ApiError } from "@portfolio/db/client";
+import { IntakeRunConsole } from "@/components/intake-run-console";
+import { StageActivity, StageGlyph } from "@/components/pipeline-stage-activity";
 import { PageBackdrop } from "@/components/reference-about/page-backdrop";
 import { CountUp, Reveal } from "@/components/reference-home/motion";
 import { Eyebrow, TechTag } from "@/components/reference-home/ui";
@@ -40,6 +49,13 @@ const PENDING_THRESHOLDS: Array<{ id: StageId; afterMs: number }> = [
   { id: "extract", afterMs: 2_500 },
   { id: "generate", afterMs: 4_000 },
 ];
+
+// Shared by the rail and the main panel so both name the same running stage.
+function pendingStageId(elapsedMs: number): StageId {
+  return (
+    [...PENDING_THRESHOLDS].reverse().find((entry) => elapsedMs >= entry.afterMs)?.id ?? "fetch"
+  );
+}
 
 const TEXT_SECTIONS: Array<{ field: keyof IntakeDemo["draft"]; label: TKey }> = [
   { field: "overview", label: "pd.overview" },
@@ -85,16 +101,16 @@ function FieldBadge({ generated }: { generated: boolean }) {
 
 function StageRail({
   pending,
-  elapsedMs,
+  currentPending,
   result,
 }: {
   pending: boolean;
-  elapsedMs: number;
+  /** The stage the run reports as running — the rail marks earlier ones done. */
+  currentPending: StageId;
   result: IntakeDemo | null;
 }) {
   const { t, formatNumber } = useI18n();
-  const currentPending =
-    [...PENDING_THRESHOLDS].reverse().find((entry) => elapsedMs >= entry.afterMs)?.id ?? "fetch";
+  const reduceMotion = useReducedMotion();
 
   return (
     <ol className="space-y-3">
@@ -115,6 +131,9 @@ function StageRail({
               ? "ok"
               : (reported?.status ?? "skipped")
             : "idle";
+        // A running stage animates what it is doing; with reduced motion it
+        // falls back to the spinner and the plain description.
+        const animated = state === "running" && !reduceMotion;
         return (
           <li
             key={stage.id}
@@ -137,7 +156,9 @@ function StageRail({
                       : "text-muted-foreground/60"
               }`}
             >
-              {state === "running" ? (
+              {animated ? (
+                <StageGlyph stage={stage.id} />
+              ) : state === "running" ? (
                 <Loader2 aria-hidden className="h-4 w-4 animate-spin" />
               ) : state === "ok" ? (
                 <CircleCheck aria-hidden className="h-4 w-4" />
@@ -162,9 +183,16 @@ function StageRail({
                   </span>
                 ) : null}
               </span>
-              <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
-                {t(stage.sub)}
-              </span>
+              {animated ? (
+                <span className="mt-1.5 flex min-h-9 flex-col justify-center">
+                  <span className="sr-only">{t(stage.sub)}</span>
+                  <StageActivity stage={stage.id} />
+                </span>
+              ) : (
+                <span className="mt-0.5 block text-xs leading-5 text-muted-foreground">
+                  {t(stage.sub)}
+                </span>
+              )}
             </span>
           </li>
         );
@@ -324,6 +352,59 @@ function Scorecard({ scores, readmeChars }: { scores: IntakeDemoScores; readmeCh
   );
 }
 
+// Below this, the draft is thin because the README was thin — not because the
+// run underperformed. Presenting a near-empty card as a finished case study
+// invites the wrong reading, so the page leads with which one it was and names
+// the sections the repository never published.
+const THIN_COVERAGE = 50;
+
+function ThinSourceNotice({ result }: { result: IntakeDemo }) {
+  const { t, formatNumber } = useI18n();
+  const { detail } = result.scores;
+  const missing = [...TEXT_SECTIONS, ...LIST_SECTIONS]
+    .filter((section) => {
+      const value = result.draft[section.field];
+      return Array.isArray(value) ? value.length === 0 : !String(value ?? "").trim();
+    })
+    .map((section) => t(section.label));
+
+  return (
+    <section className="mb-4 rounded-xl border border-[color:var(--signal-2)]/40 bg-[color:var(--signal-2)]/5 p-4">
+      <div className="flex items-start gap-3">
+        <FileSearch aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--signal-2)]" />
+        <div className="min-w-0">
+          <h2 className="text-sm font-medium">{t("ailab.thin.title")}</h2>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+            {t("ailab.thin.body", {
+              n: formatNumber(detail.fieldsFilled),
+              total: formatNumber(detail.fieldsTotal),
+            })}
+          </p>
+          {missing.length > 0 ? (
+            <>
+              <p className="mt-3 font-mono text-[0.62rem] uppercase tracking-wider text-muted-foreground">
+                {t("ailab.thin.missing")}
+              </p>
+              {/* Chips, not a comma sentence: a thin README routinely leaves a
+                  dozen fields empty, and that reads as a wall of prose. */}
+              <ul className="mt-1.5 flex flex-wrap gap-1.5">
+                {missing.map((label) => (
+                  <li
+                    key={label}
+                    className="rounded-full border border-dashed border-border px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-wide text-muted-foreground"
+                  >
+                    {label}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function DraftPreview({ result }: { result: IntakeDemo }) {
   const { t } = useI18n();
   const generated = new Set<string>(result.generatedFields);
@@ -335,7 +416,6 @@ function DraftPreview({ result }: { result: IntakeDemo }) {
     ...section,
     items: result.draft[section.field],
   })).filter((section) => section.items.length > 0);
-  const sparse = textSections.length <= 1 && listSections.length === 0;
 
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-card">
@@ -427,8 +507,6 @@ function DraftPreview({ result }: { result: IntakeDemo }) {
             </ul>
           </section>
         ))}
-
-        {sparse ? <p className="text-sm text-muted-foreground">{t("ailab.sparse")}</p> : null}
       </div>
     </article>
   );
@@ -442,7 +520,16 @@ export function AiLabPage() {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [result, setResult] = useState<IntakeDemo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [events, setEvents] = useState<IntakeDemoEvent[]>([]);
   const runRef = useRef(0);
+  // The stream reports which stage is actually running; the elapsed-time
+  // heuristic only stands in until the first event arrives (or for an API that
+  // answers the non-streaming route).
+  const streamedStage = events.reduce<StageId | null>(
+    (current, event) => (event.type === "stage" ? event.id : current),
+    null,
+  );
+  const runningStage = streamedStage ?? pendingStageId(elapsedMs);
 
   useEffect(() => {
     if (!pending) return;
@@ -450,6 +537,29 @@ export function AiLabPage() {
     const timer = window.setInterval(() => setElapsedMs(Date.now() - startedAt), 500);
     return () => window.clearInterval(timer);
   }, [pending]);
+
+  async function runDemo(value: string, run: number): Promise<IntakeDemo> {
+    const client = getApiClient();
+    // Grounded generation on a local model is slow by design; the signal
+    // outlives the server-side generation timeout.
+    const signal = AbortSignal.timeout(150_000);
+    try {
+      return await client.streamIntakeDemo(
+        value,
+        (event) => {
+          if (runRef.current === run) setEvents((current) => [...current, event]);
+        },
+        signal,
+      );
+    } catch (caught) {
+      // An API deployed without the streaming route still answers the plain
+      // one — the run then arrives in a single piece, with no live log.
+      if (caught instanceof ApiError && caught.code === "route_not_found") {
+        return client.runIntakeDemo(value, signal);
+      }
+      throw caught;
+    }
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -460,10 +570,8 @@ export function AiLabPage() {
     setElapsedMs(0);
     setError(null);
     setResult(null);
-    void getApiClient()
-      // Grounded generation on a local model is slow by design; the signal
-      // outlives the server-side generation timeout.
-      .runIntakeDemo(value, AbortSignal.timeout(150_000))
+    setEvents([]);
+    void runDemo(value, run)
       .then((demo) => {
         if (runRef.current !== run) return;
         setResult(demo);
@@ -577,9 +685,21 @@ export function AiLabPage() {
                       : t("ailab.mode.extracted")}
                   </p>
                 </div>
+                {result.scores.coverage < THIN_COVERAGE ? (
+                  <ThinSourceNotice result={result} />
+                ) : null}
                 <Scorecard scores={result.scores} readmeChars={result.repo.readmeChars} />
                 <DraftPreview result={result} />
               </Reveal>
+            ) : pending ? (
+              // The wait is long enough (a local model, grounded) that an empty
+              // box reads as a stall — so the panel narrates the run itself.
+              <IntakeRunConsole
+                stage={runningStage}
+                events={events}
+                elapsedMs={elapsedMs}
+                caption={t("ailab.waiting")}
+              />
             ) : (
               <div className="grid min-h-[20rem] place-items-center rounded-2xl border border-dashed border-border p-8 text-center">
                 <div>
@@ -598,7 +718,7 @@ export function AiLabPage() {
                 {t("ailab.pipeline")}
               </h2>
               <div className="mt-3">
-                <StageRail pending={pending} elapsedMs={elapsedMs} result={result} />
+                <StageRail pending={pending} currentPending={runningStage} result={result} />
               </div>
             </section>
 
