@@ -10,6 +10,7 @@ import type {
   AssistantAskRequest,
   ContactRequest,
   IntakeDemo,
+  IntakeDemoEvent,
   MessageReplyDraft,
   ContentSnapshot,
   Dashboard,
@@ -70,6 +71,17 @@ export interface PortfolioApiClient {
   lookupTicket(input: TicketLookupRequest, signal?: AbortSignal): Promise<Message>;
   askAssistant(input: AssistantAskRequest, signal?: AbortSignal): Promise<AssistantAnswer>;
   runIntakeDemo(url: string, signal?: AbortSignal): Promise<IntakeDemo>;
+  /**
+   * The same run, narrated: `onEvent` fires for every stage and measurement the
+   * pipeline reports, and the resolved demo is the final frame. Throws
+   * `ApiError` exactly like {@link runIntakeDemo} — including for failures
+   * reported inside the stream, which arrive after a 200.
+   */
+  streamIntakeDemo(
+    url: string,
+    onEvent: (event: IntakeDemoEvent) => void,
+    signal?: AbortSignal,
+  ): Promise<IntakeDemo>;
   replyToTicket(input: TicketReplyRequest, signal?: AbortSignal): Promise<Message>;
   getUiMessages(signal?: AbortSignal): Promise<UiMessageBundle>;
   updateUiMessage(
@@ -259,6 +271,74 @@ export function createApiClient(options: ApiClientOptions): PortfolioApiClient {
         csrf: "public",
         ...(signal ? { signal } : {}),
       }),
+    streamIntakeDemo: async (url, onEvent, signal) => {
+      if (!publicCsrfToken) publicCsrfToken = (await getPublicCsrfToken(signal)).csrfToken;
+      const init: RequestInit = {
+        method: "POST",
+        credentials: "include",
+        headers: new Headers({
+          Accept: "application/x-ndjson",
+          "Content-Type": "application/json",
+          "X-CSRF-Token": publicCsrfToken,
+        }),
+        body: JSON.stringify({ url }),
+      };
+      if (signal) init.signal = signal;
+      const response = await fetchImplementation(`${baseUrl}/api/public/intake-demo/stream`, init);
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => null)) as {
+          error?: { code?: string; message?: string };
+        } | null;
+        throw new ApiError(
+          response.status,
+          payload?.error?.code ?? "request_failed",
+          payload?.error?.message ?? "The request could not be completed.",
+        );
+      }
+
+      // Captured through an object so the assignment inside `handle` survives
+      // narrowing — a plain `let` reads as never-assigned after the loop.
+      const captured: { demo?: IntakeDemo; failure?: ApiError } = {};
+      const handle = (line: string) => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+        let event: IntakeDemoEvent;
+        try {
+          event = JSON.parse(trimmed) as IntakeDemoEvent;
+        } catch {
+          return; // a truncated frame is not worth failing the whole run over
+        }
+        if (event.type === "result") captured.demo = event.demo;
+        if (event.type === "error")
+          captured.failure = new ApiError(event.status, event.code, event.message);
+        onEvent(event);
+      };
+
+      // Read frame by frame where the runtime exposes a body stream; parse the
+      // whole response at once otherwise (jsdom, fetch polyfills) so the call
+      // still returns a demo, just without the live narration.
+      if (response.body) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";
+          for (const line of lines) handle(line);
+        }
+        handle(buffer);
+      } else {
+        for (const line of (await response.text()).split("\n")) handle(line);
+      }
+
+      if (captured.failure) throw captured.failure;
+      if (!captured.demo)
+        throw new ApiError(502, "stream_incomplete", "The pipeline run ended without a result.");
+      return captured.demo;
+    },
     replyToTicket: (input, signal) =>
       request("/api/ticket/reply", {
         method: "POST",
