@@ -530,6 +530,54 @@ export type IntakeDemoScores = {
   };
 };
 
+/**
+ * One thing the pipeline observed, streamed while the run is still in flight.
+ * Every variant carries measured values — repository metadata as GitHub
+ * returned it, real README headings, per-field character counts — so the live
+ * log states what happened rather than narrating a plausible run. The client
+ * renders each variant through its own localized message; no prose crosses the
+ * wire except text the repository itself published.
+ */
+export type IntakeDemoNote =
+  | { kind: "repo"; fullName: string; language: string | null; topics: number }
+  | { kind: "readme"; chars: number }
+  /** A heading the sectionizer actually found, verbatim from the README. */
+  | { kind: "section"; heading: string }
+  | { kind: "sections"; count: number }
+  /**
+   * A draft field that came back filled, and how much copy it holds. `items`
+   * is present for list fields (stack, results, …) — an entry count reads
+   * better there than a character total.
+   */
+  | {
+      kind: "field";
+      field: ProjectRegenerationFieldName;
+      chars: number;
+      items?: number;
+      generated: boolean;
+    }
+  /**
+   * The grounding handed to the model: the clipped README size and how many
+   * fields were asked for. The model tag itself is deliberately not published.
+   */
+  | { kind: "grounding"; chars: number; fields: number }
+  /** The model did not contribute — the deterministic draft stands. */
+  | { kind: "fallback"; reason: "unavailable" | "failed" }
+  | { kind: "review"; notes: number };
+
+/** NDJSON frames of a streamed demo run, in emission order. */
+export type IntakeDemoEvent =
+  | { type: "stage"; id: IntakeDemoStage["id"] }
+  | { type: "stage-done"; stage: IntakeDemoStage }
+  | { type: "note"; note: IntakeDemoNote }
+  | { type: "result"; demo: IntakeDemo }
+  /**
+   * A failure the client must surface. `status` is the HTTP status the plain
+   * JSON route would have answered with — the stream itself is already a 200
+   * by the time anything can go wrong, so the code travels in the payload.
+   */
+  | { type: "error"; status: number; code: string; message: string };
+
 export type IntakeDemo = {
   repo: {
     fullName: string;
