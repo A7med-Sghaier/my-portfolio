@@ -34,6 +34,13 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      # Must precede lint. `core` and `api-client` are consumed from their
+      # compiled dist/, and type-aware ESLint resolves an unbuilt import to the
+      # `error` type — which surfaces as a wall of no-unsafe-* errors in
+      # api-client rather than anything resembling a missing build.
+      - name: Build shared packages
+        run: pnpm build:packages
+
       - name: Lint
         run: pnpm lint
 
