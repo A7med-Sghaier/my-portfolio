@@ -1,4 +1,4 @@
-# Portfolio assistant — answering architecture
+# Portfolio assistant and AI Lab
 
 The public site's "Ask my portfolio" widget answers visitor questions about
 experience, projects, skills, education, and availability. It is backed by a
@@ -51,3 +51,38 @@ so a model outage degrades the response quality rather than the feature.
 The endpoint accepts the site locale (`en`, `de`, `fr`, `ar`) and instructs the
 model to answer in that language unless the question is clearly written in
 another one. The fallback matcher is multilingual across the same four locales.
+
+## AI Lab
+
+`/ai-lab` is the public window into the studio's repository-intake pipeline. A
+visitor pastes a public GitHub repository and watches the same
+**fetch → extract → generate → review** flow the admin uses produce a draft case
+study, streamed stage by stage.
+
+```mermaid
+flowchart LR
+    R[Public repo URL] --> F[fetch<br/>repository metadata + README]
+    F --> E[extract<br/>headings, stack, evidence]
+    E --> G[generate<br/>draft case-study copy]
+    G --> V[review<br/>scored draft, staged not applied]
+```
+
+Properties worth knowing:
+
+- **Nothing submitted is stored.** The run is transient; no record of the
+  repository or the draft survives the request.
+- **It degrades server-side, unlike the assistant.** When no generator is
+  configured or reachable, extraction falls back to a heuristic and the draft
+  comes back marked `mode: "extracted"` rather than generated — the pipeline
+  still completes and the stages still stream.
+- **The draft is staged, never applied.** Even in the studio, intake output is
+  presented for review rather than written directly to content.
+
+| Piece   | Location                                               | Responsibility                                          |
+| ------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| Page    | `apps/portfolio/src/routes/ai-lab.tsx`                 | Stage rail, elapsed-time progress, draft presentation   |
+| Console | `apps/portfolio/src/components/intake-run-console.tsx` | Renders the streamed stage events                       |
+| Client  | `packages/api-client`                                  | `runIntakeDemo` and the `streamIntakeDemo` event stream |
+
+The intake pipeline itself — fetching, extraction heuristics, and generation —
+lives in the private platform repository.
