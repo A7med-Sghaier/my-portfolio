@@ -1,0 +1,22 @@
+.git
+.github
+.pnpm-store
+# `.env*`, not `.env.*` — the dot-anchored form misses editor/Finder duplicates
+# like `.env copy`, which carry the same values.
+.env*
+.gitignore
+.nvmrc
+.prettierignore
+.prettierrc.json
+README.md
+CLAUDE.md
+docs
+assets
+eslint.config.mjs
+node_modules
+**/node_modules
+**/dist
+**/storybook-static
+coverage
+*.log
+.DS_Store

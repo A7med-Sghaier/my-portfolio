@@ -4,8 +4,4 @@ node_modules
 dist
 coverage
 storybook-static
-playwright-report
-test-results
 pnpm-lock.yaml
-content/messages.json
-packages/db/src/seed-content.json

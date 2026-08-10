@@ -17,7 +17,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
-    files: ["apps/**/*.{ts,tsx}", "packages/**/*.{ts,tsx}", "e2e/**/*.ts"],
+    files: ["apps/**/*.{ts,tsx}", "packages/**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: "latest",
       globals: { ...globals.browser, ...globals.node },
@@ -70,19 +70,10 @@ export default tseslint.config(
     },
   },
   {
-    files: ["apps/admin/src/**/*.{ts,tsx}", "apps/portfolio/src/**/*.{ts,tsx}"],
+    files: ["apps/portfolio/src/**/*.{ts,tsx}"],
     rules: {
       // React Router intentionally throws Response objects from loaders and actions.
       "@typescript-eslint/only-throw-error": "off",
-    },
-  },
-  {
-    files: ["scripts/**/*.{js,mjs}"],
-    languageOptions: {
-      globals: globals.node,
-    },
-    rules: {
-      ...tseslint.configs.disableTypeChecked.rules,
     },
   },
 );
