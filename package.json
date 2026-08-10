@@ -10,7 +10,7 @@
     "node": ">=20.11.0 <26"
   },
   "scripts": {
-    "build:packages": "pnpm --filter @portfolio/core build && pnpm --filter @portfolio/db build",
+    "build:packages": "pnpm --filter @portfolio/core build && pnpm --filter @portfolio/api-client build && pnpm --filter @portfolio/db build",
     "dev": "pnpm build:packages && node scripts/dev.mjs all",
     "dev:portfolio": "pnpm build:packages && node scripts/dev.mjs portfolio",
     "dev:admin": "pnpm build:packages && node scripts/dev.mjs admin",

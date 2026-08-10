@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@portfolio/ui": "workspace:*",
-    "@portfolio/db": "workspace:*",
+    "@portfolio/api-client": "workspace:*",
     "@portfolio/i18n": "workspace:*",
     "jspdf": "^4.2.1",
     "lucide-react": "0.487.0",

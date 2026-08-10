@@ -19,7 +19,7 @@ import type {
   IntakeDemoScores,
   IntakeDemoStage,
 } from "@portfolio/core";
-import { ApiError } from "@portfolio/db/client";
+import { ApiError } from "@portfolio/api-client";
 import { IntakeRunConsole } from "@/components/intake-run-console";
 import { StageActivity, StageGlyph } from "@/components/pipeline-stage-activity";
 import { PageBackdrop } from "@/components/reference-about/page-backdrop";

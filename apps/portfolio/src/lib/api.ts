@@ -1,4 +1,4 @@
-import { ApiError, createApiClient, type PortfolioApiClient } from "@portfolio/db/client";
+import { ApiError, createApiClient, type PortfolioApiClient } from "@portfolio/api-client";
 
 export interface ContactSubmission {
   name: string;

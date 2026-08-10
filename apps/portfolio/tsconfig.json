@@ -18,7 +18,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@portfolio/db/client": ["../../packages/db/src/client.ts"],
+      "@portfolio/api-client": ["../../packages/api-client/src/index.ts"],
       "@portfolio/core": ["../../packages/core/src/index.ts"]
     },
     "resolveJsonModule": true,
