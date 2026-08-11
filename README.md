@@ -5,7 +5,7 @@
 <br/>
 
 <a href="https://github.com/A7med-Sghaier/my-portfolio">
-  <img src="https://readme-typing-svg.demolab.com?font=Segoe+UI&weight=600&size=20&pause=1000&color=2DD4BF&center=true&vCenter=true&width=760&lines=Public+portfolio+SPA+%C2%B7+API-driven+%C2%B7+no+mocked+data;React+18+%C2%B7+Vite+6+%C2%B7+Tailwind+4+%C2%B7+React+Router+7;Four+locales+%C2%B7+EN+%2F+DE+%2F+FR+%2F+AR+%C2%B7+full+RTL;Ask+my+portfolio+%C2%B7+AI+Lab+%C2%B7+grounded+answers" alt="Public portfolio SPA — API-driven, four locales, a grounded assistant and a live AI Lab." />
+  <img src="https://readme-typing-svg.demolab.com?font=Segoe+UI&weight=600&size=20&pause=1000&color=2DD4BF&center=true&vCenter=true&width=760&lines=Public+portfolio+SPA+%C2%B7+API-driven+%C2%B7+no+mocked+data;React+18+%C2%B7+Vite+6+%C2%B7+Tailwind+4+%C2%B7+React+Router+7;Four+locales+%C2%B7+EN+%2F+DE+%2F+FR+%2F+AR+%C2%B7+full+RTL;Ask+my+portfolio+%C2%B7+AI+Lab+%C2%B7+grounded+answers" alt="Public portfolio SPA — API-driven, four locales, a grounded AI assistant and a live AI Lab." />
 </a>
 
 <br/><br/>
@@ -24,22 +24,34 @@
 ![i18n](https://img.shields.io/badge/EN_·_DE_·_FR_·_AR-2DD4BF?style=flat-square)
 ![License](https://img.shields.io/badge/License-MIT-3DA639?style=flat-square&logo=opensourceinitiative&logoColor=white)
 
+<br/>
+
+**[Live site — a7med-sghaier.app](https://a7med-sghaier.app)** · [AI Lab](https://a7med-sghaier.app/ai-lab) · [Résumé](https://a7med-sghaier.app/resume)
+
+<sub>The “Ask my portfolio” assistant is available from every page of the live site.</sub>
+
 </div>
 
-The **public site** of my personal engineering platform, live at
-**[a7med-sghaier.app](https://a7med-sghaier.app)**. A React 18 single-page
-application driven entirely by a live REST API, speaking **four languages**
-(EN · DE · FR · AR) with **full RTL**, and shipping two AI features you can try
-without an account: an assistant that answers questions about my work, and a
-**live AI Lab** that drafts a case study from any public GitHub repository while
-you watch. This repository also holds the shared **design system**, **domain
-schemas**, **locale catalogues**, and **typed API client** the platform is built
-from.
+The public single-page application behind **[a7med-sghaier.app](https://a7med-sghaier.app)**, together with the shared packages it is built from: the design system, the domain schemas, the locale catalogues, and the typed API client.
+
+The site is a React 18 SPA served as a static bundle. All content — profile, experience, projects, expertise, and the interface copy itself — is fetched from a REST API at runtime. It is published in four languages (English, German, French, Arabic) with full right-to-left support, and includes two features backed by a generative model: an assistant that answers questions about my background, and a lab that drafts a project case study from any public GitHub repository.
 
 > [!NOTE]
-> There is **no mocked runtime data**. Every page — profile, experience,
-> projects, expertise, and even the UI copy — is fetched from the API at
-> runtime, so what you run locally is the same code path that serves production.
+> There is no mocked runtime data. Every page is driven by the live API, so a local checkout exercises the same code path that serves production.
+
+<div align="center"><img src="./assets/divider.svg" width="70%" alt="" /></div>
+
+## Contents
+
+- [Gallery](#gallery)
+- [Features](#features)
+- [AI features](#ai-features)
+- [Repository scope](#repository-scope)
+- [Architecture](#architecture)
+- [Getting started](#getting-started)
+- [Quality gates](#quality-gates)
+- [Documentation](#documentation)
+- [License](#license)
 
 <div align="center"><img src="./assets/divider.svg" width="70%" alt="" /></div>
 
@@ -47,97 +59,72 @@ from.
 
 |                                                                                       |                                                                                       |
 | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| **Public portfolio** — aurora hero, cursor spotlight, live status console             | **Projects** — case-study grid driven by the API                                      |
+| **Home** — aurora hero, cursor spotlight, live status console                         | **Projects** — case-study grid driven by the API                                      |
 | <img src="docs/images/portfolio-home.png" alt="Portfolio home" width="420">           | <img src="docs/images/portfolio-projects.png" alt="Projects grid" width="420">        |
-| **Case study** — metrics, architecture, evidence, live GitHub sync                    | **Ask my portfolio** — grounded in published content only                             |
+| **Case study** — metrics, architecture, evidence, live repository metadata            | **Ask my portfolio** — answers grounded in published content                          |
 | <img src="docs/images/portfolio-project-detail.png" alt="Project detail" width="420"> | <img src="docs/images/portfolio-assistant.png" alt="Portfolio assistant" width="420"> |
 
 <div align="center"><img src="./assets/divider.svg" width="70%" alt="" /></div>
 
-## What it does
+## Features
 
-- **Four locales, properly.** EN · DE · FR · AR with full right-to-left layout —
-  not a machine-translated afterthought. A key-parity assertion in the test
-  suite fails the build if a string lands in one language and not the others.
-- **Content-driven.** Profile, experience, projects, expertise and UI copy all
-  come from the API, so the site is edited through a studio rather than a
-  redeploy.
-- **Case studies, not screenshots.** Each project page carries metrics,
-  an architecture diagram, evidence links, and live repository metadata.
-- **Considered motion and accessibility.** A shared motion system that honours
-  `prefers-reduced-motion`, a keyboard command palette, and semantic/contrast
-  review backed by an accessibility addon in Storybook.
-- **PDF résumé export** generated client-side from the same live content.
+**Four locales with full RTL.** English, German, French, and Arabic, including right-to-left layout. A key-parity assertion in the test suite fails the build when a string is added to one locale and not the others, and the interface copy can be overridden at runtime through the API without a redeploy.
+
+**API-driven content.** Every content surface is fetched at runtime and edited through a separate studio, so publishing does not require a deployment.
+
+**Detailed project pages.** Each case study carries performance metrics, an architecture diagram, evidence links, and repository metadata synchronised from GitHub.
+
+**Motion and accessibility.** A shared motion system that honours `prefers-reduced-motion`, a keyboard command palette, and semantic, focus, contrast, and screen-reader review supported by an accessibility addon in Storybook.
+
+**Client-side résumé export.** A PDF résumé generated in the browser from the same live content.
 
 <div align="center"><img src="./assets/divider.svg" width="70%" alt="" /></div>
 
-## The two AI features
+## AI features
 
 ### Ask my portfolio
 
-A chat widget that answers visitor questions about my experience, projects,
-skills, education, and availability — in whichever of the four languages you ask.
+A chat widget that answers visitor questions about experience, projects, skills, education, and availability, in any of the four site locales.
 
-What makes it trustworthy rather than a demo:
+| Property           | Behaviour                                                                                                                                                                                         |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Grounding**      | The model receives only published content — draft, hidden, and private records are filtered out beforehand — under a prompt that forbids inventing employers, projects, metrics, or availability. |
+| **Degraded path**  | If the model errors or times out, the API returns `502` and the widget answers from `answerPortfolioQuestion`, a deterministic multilingual keyword matcher over the same content.                |
+| **Abuse controls** | Rate-limited per IP address, with questions capped at 500 characters.                                                                                                                             |
 
-- **It only sees published content.** The model receives exactly what the site
-  renders; draft, hidden, and private records are filtered out before the
-  request is built, under a system prompt that forbids inventing employers,
-  projects, metrics, or availability.
-- **It never goes dark.** When the model errors or times out, the API returns
-  `502` and the widget falls back to `answerPortfolioQuestion`, a deterministic
-  multilingual keyword matcher over the same facts. The degraded path is a
-  _designed_ path with its own tests — not an accident.
-- **It is abuse-limited.** Rate-limited per IP, with questions capped at 500
-  characters.
+The fallback is a designed path with its own test coverage, not an error state: a model outage reduces answer quality rather than removing the feature.
 
 ### AI Lab
 
-A public window into the studio's repository-intake pipeline. Paste any public
-GitHub repository and watch the same **fetch → extract → generate → review**
-flow the admin uses produce a draft case study, stage by stage, streamed live.
+A public view of the content studio's repository-intake pipeline. Submitting a public GitHub repository runs the same **fetch → extract → generate → review** flow the studio uses, streamed stage by stage, and returns a draft case study.
 
-It is the honest version of an AI feature demo: you supply the input, you see
-each stage as it runs, and you see the reviewed draft rather than a polished
-result. **Nothing you submit is stored.** When no generator is reachable the
-pipeline still completes — extraction falls back to a heuristic, and the draft
-is marked as extracted rather than generated.
+- Submitted repositories and generated drafts are **not stored**; each run is transient.
+- The pipeline completes even with no generator available: extraction falls back to a heuristic and the result is marked as extracted rather than generated.
+- Output is presented for review and is never applied to content automatically.
 
-Both features are documented in
-[docs/architecture/portfolio-assistant.md](docs/architecture/portfolio-assistant.md).
+Both features are documented in [docs/architecture/portfolio-assistant.md](docs/architecture/portfolio-assistant.md).
 
 <div align="center"><img src="./assets/divider.svg" width="70%" alt="" /></div>
 
-## What is here, and what is not
+## Repository scope
 
-This repository is the **public half** of the platform. It contains everything
-that runs in the visitor's browser, plus the packages that define the contract
-between browser and server:
+This repository contains the browser application and the packages that define the contract between browser and server.
 
-| Workspace             | What it is                                                               |
+| Workspace             | Contents                                                                 |
 | --------------------- | ------------------------------------------------------------------------ |
 | `apps/portfolio`      | The public single-page application                                       |
 | `packages/core`       | Domain types and zod validation schemas — the contract at every boundary |
-| `packages/api-client` | The typed browser API client. Zero runtime dependencies                  |
-| `packages/i18n`       | Locale catalogues and helpers, with the key-parity guard                 |
+| `packages/api-client` | The typed browser API client; no runtime dependencies                    |
+| `packages/i18n`       | Locale catalogues, helpers, and the key-parity guard                     |
 | `packages/ui`         | Design-system primitives with Storybook coverage                         |
 
-The **server side is deliberately not open-sourced**: the REST API, the admin
-content studio, the PostgreSQL schema and migrations, and the deployment
-pipeline live in a separate private repository. That code runs my live site and
-is **proprietary — all rights reserved**; it is not offered under the MIT licence
-that covers this repository, and it is not distributed. Publishing the client
-while keeping the service private also keeps the operational surface (content
-pipeline, credentials, deployment topology) out of scope for a portfolio
-project.
+### What is not included
 
-That split is why `packages/api-client` exists as its own package. It carries
-the full typed surface of the API and **no runtime dependencies** — it imports
-only _types_ from `core` — so the public application and the private service can
-live in different repositories without either duplicating the contract, and
-nothing server-side can reach a browser bundle through it.
+The REST API, the admin content studio, the PostgreSQL schema and migrations, and the deployment pipeline are maintained in a separate private repository. That code operates the live service and is **proprietary, all rights reserved**. It is not distributed and is not covered by the MIT licence that applies to this repository. Keeping the service private also places its operational surface — content pipeline, credentials, and deployment topology — outside the scope of a public portfolio project.
 
-### Architecture
+The split is practical because of `packages/api-client`. It carries the complete typed surface of the API and imports only _types_ from `packages/core`, giving it no runtime dependencies. Both halves therefore share one contract without duplicating it, and no server-side code can reach a browser bundle through it.
+
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -157,32 +144,35 @@ flowchart LR
     P --- Shared
 ```
 
-The SPA is served as a static bundle; the serving edge proxies `/api` to the API
-so credentialed requests stay same-origin and cookies stay first-party.
+The application is deployed as a static bundle behind an edge proxy that forwards `/api` to the API. Requests therefore remain same-origin and authentication cookies stay first-party. The container image is built by this repository's CI and published to the GitHub Container Registry, from which the private deployment consumes it by tag.
 
 <div align="center"><img src="./assets/divider.svg" width="70%" alt="" /></div>
 
-## Quick start
+## Getting started
 
-Requirements: Node.js 20.11+ (22 LTS via `.nvmrc`) and pnpm 9.15.
+**Requirements:** Node.js 20.11 or later (22 LTS via `.nvmrc`) and pnpm 9.15.
 
 ```sh
 pnpm install
 pnpm dev
 ```
 
-The site starts on `http://127.0.0.1:4173`.
+The development server listens on `http://127.0.0.1:4173`.
 
-`VITE_API_URL` selects the backend (see `apps/portfolio/.env.example`):
+### Selecting an API
 
-| Value             | Behaviour                                                                                  |
-| ----------------- | ------------------------------------------------------------------------------------------ |
-| _empty_ (default) | Calls go to the serving origin's `/api`; the dev server proxies to `VITE_API_PROXY_TARGET` |
-| An absolute URL   | Calls go directly to that API                                                              |
+`VITE_API_URL` determines where requests are sent (see `apps/portfolio/.env.example`):
 
-Since the public endpoints are public, pointing `VITE_API_URL` at the live
-production API renders the real site content on a fresh clone — including the
-assistant and the AI Lab.
+| Value             | Behaviour                                                                                          |
+| ----------------- | -------------------------------------------------------------------------------------------------- |
+| _empty_ (default) | Requests go to the serving origin's `/api`; the dev server proxies them to `VITE_API_PROXY_TARGET` |
+| An absolute URL   | Requests go directly to that API                                                                   |
+
+Because the public endpoints require no authentication, pointing the application at the production API renders the real site content from a fresh checkout, including both AI features:
+
+```sh
+VITE_API_URL=https://a7med-sghaier.app pnpm dev
+```
 
 ## Quality gates
 
@@ -194,8 +184,10 @@ pnpm build           # production build
 pnpm storybook       # design-system workbench
 ```
 
-CI runs formatting, lint, typecheck, unit tests, the production build, and a
-Storybook build on every push and pull request.
+Continuous integration runs formatting, lint, typecheck, unit tests, the production build, and a Storybook build on every push and pull request.
+
+> [!IMPORTANT]
+> `packages/core` and `packages/api-client` are consumed from their compiled `dist/`, so `pnpm build:packages` must run before linting or type-checking. The root `dev`, `test`, and `typecheck` scripts do this automatically.
 
 ## Documentation
 
@@ -206,6 +198,10 @@ Storybook build on every push and pull request.
 | [Design system](docs/design/design-system.md)                                               | [Accessibility](docs/design/accessibility.md)                 |
 | [Responsive strategy](docs/design/responsive-strategy.md)                                   | [Testing](docs/development/testing.md)                        |
 | [Storybook](docs/development/storybook.md)                                                  |                                                               |
+
+## Project status
+
+This is a personal project that backs a live site. It is published as a reference implementation rather than as a general-purpose template, and it is not seeking contributions. Issues reporting a genuine defect are welcome.
 
 <div align="center">
 
@@ -218,6 +214,4 @@ Storybook build on every push and pull request.
 
 ## License
 
-The contents of **this repository** are released under the
-[MIT License](LICENSE). The private server-side platform described above is not
-covered by it and remains proprietary.
+This repository is released under the [MIT License](LICENSE). The private server-side platform described in [Repository scope](#repository-scope) is not covered by that licence and remains proprietary.
