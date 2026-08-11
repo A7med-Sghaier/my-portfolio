@@ -9,7 +9,6 @@
 .prettierignore
 .prettierrc.json
 README.md
-CLAUDE.md
 docs
 assets
 eslint.config.mjs
